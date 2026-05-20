@@ -3,8 +3,6 @@ World model — framework-agnostic.
 Uses module-level cache (no Streamlit / no external dep).
 Streamlit callers wrap with @st.cache_data at the UI layer.
 """
-import numpy as np
-import pandas as pd
 from typing import Dict
 
 _CACHE: Dict = {}
@@ -39,8 +37,10 @@ def get_world_state() -> Dict:
     return _CACHE["world"]
 
 
-def simulate_tankers(seed: int = 42, n: int = 25) -> pd.DataFrame:
-    """Deterministic tanker positions clustered near chokepoints."""
+def simulate_tankers(seed: int = 42, n: int = 25):
+    """Deterministic tanker positions clustered near chokepoints. Returns pd.DataFrame."""
+    import numpy as np   # lazy — not available in serverless bundle
+    import pandas as pd  # lazy — not available in serverless bundle
     key = ("tankers", seed, n)
     if key in _CACHE:
         return _CACHE[key]
