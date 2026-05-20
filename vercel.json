@@ -1,16 +1,7 @@
 {
-  "version": 2,
+  "framework": null,
   "outputDirectory": "public",
-  "builds": [
-    {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": { "maxLambdaSize": "60mb" }
-    }
-  ],
-  "routes": [
-    { "src": "/api(.*)", "dest": "/api/index.py" },
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/(.*)", "dest": "/$1" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.py" }
   ]
 }
