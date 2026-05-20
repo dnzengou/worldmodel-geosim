@@ -1,0 +1,90 @@
+[
+  {
+    "id": "taiwan_blockade",
+    "name": "Taiwan Strait Blockade 2026",
+    "description": "PLA maritime blockade of Taiwan triggers US-CN direct confrontation and Malacca chokepoint disruption.",
+    "icon": "🚢",
+    "base_escalation": 0.75,
+    "triggers": {"energy": true, "chokepoint": true, "sanctions": false},
+    "theories": {"escalation": 1.1},
+    "nuclear_deterrence": true,
+    "aggression": {"US": 0.8, "CN": 0.9, "EU": 0.5, "RU": 0.3}
+  },
+  {
+    "id": "russia_eu_gas",
+    "name": "Russia–EU Gas Cutoff",
+    "description": "Complete halt of Russian LNG to Europe forces emergency energy diversification. Winter scenario.",
+    "icon": "🔥",
+    "base_escalation": 0.55,
+    "triggers": {"energy": true, "chokepoint": false, "sanctions": true},
+    "theories": {"escalation": 1.0},
+    "nuclear_deterrence": false,
+    "aggression": {"US": 0.4, "CN": 0.3, "EU": 0.6, "RU": 0.85}
+  },
+  {
+    "id": "hormuz_closure",
+    "name": "Hormuz Closure Crisis",
+    "description": "Iran closes Strait of Hormuz, halting 21% of global oil transit. Gulf coalition response activated.",
+    "icon": "⛽",
+    "base_escalation": 0.70,
+    "triggers": {"energy": true, "chokepoint": true, "sanctions": false},
+    "theories": {"escalation": 1.15},
+    "nuclear_deterrence": false,
+    "aggression": {"US": 0.7, "CN": 0.5, "EU": 0.45, "RU": 0.4}
+  },
+  {
+    "id": "nuclear_standoff",
+    "name": "Nuclear Standoff Deterrence",
+    "description": "Multi-power nuclear signaling with deterrence mechanisms active. Cubic escalation damping applied.",
+    "icon": "☢️",
+    "base_escalation": 0.80,
+    "triggers": {"energy": false, "chokepoint": false, "sanctions": false},
+    "theories": {"escalation": 0.9},
+    "nuclear_deterrence": true,
+    "aggression": {"US": 0.75, "CN": 0.7, "EU": 0.5, "RU": 0.8}
+  },
+  {
+    "id": "eu_china_decouple",
+    "name": "EU–China Decoupling",
+    "description": "Comprehensive EU sanctions on China over Taiwan triggers full supply chain restructuring.",
+    "icon": "🔗",
+    "base_escalation": 0.45,
+    "triggers": {"energy": false, "chokepoint": false, "sanctions": true},
+    "theories": {"escalation": 1.0},
+    "nuclear_deterrence": false,
+    "aggression": {"US": 0.5, "CN": 0.6, "EU": 0.65, "RU": 0.3}
+  },
+  {
+    "id": "multi_front_crisis",
+    "name": "Multi-Front Crisis (Worst Case)",
+    "description": "Simultaneous Taiwan blockade, Hormuz closure, and Russia-EU gas cutoff. Full cascade scenario.",
+    "icon": "⚠️",
+    "base_escalation": 0.90,
+    "triggers": {"energy": true, "chokepoint": true, "sanctions": true},
+    "theories": {"escalation": 1.2},
+    "nuclear_deterrence": false,
+    "aggression": {"US": 0.85, "CN": 0.90, "EU": 0.70, "RU": 0.88}
+  },
+  {
+    "id": "arctic_lng",
+    "name": "Arctic LNG Race 2030",
+    "description": "Russia opens Arctic LNG corridor as alternative to Hormuz. New geopolitical balance in energy flows.",
+    "icon": "🧊",
+    "base_escalation": 0.30,
+    "triggers": {"energy": false, "chokepoint": false, "sanctions": false},
+    "theories": {"escalation": 0.8},
+    "nuclear_deterrence": false,
+    "aggression": {"US": 0.3, "CN": 0.4, "EU": 0.35, "RU": 0.5}
+  },
+  {
+    "id": "stable_baseline",
+    "name": "Baseline Stability 2030",
+    "description": "No active triggers. Multipolar equilibrium with normal energy flows. Reference state.",
+    "icon": "🕊️",
+    "base_escalation": 0.15,
+    "triggers": {"energy": false, "chokepoint": false, "sanctions": false},
+    "theories": {"escalation": 1.0},
+    "nuclear_deterrence": false,
+    "aggression": {"US": 0.2, "CN": 0.3, "EU": 0.2, "RU": 0.25}
+  }
+]

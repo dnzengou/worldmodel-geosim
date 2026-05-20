@@ -1,0 +1,31 @@
+{
+  "name": "2030 GeoSim — CAS Engine",
+  "short_name": "GeoSim",
+  "description": "Geopolitical risk modeling and simulation for 2030 scenarios",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e1a",
+  "theme_color": "#00ff88",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230a0e1a' stroke='%2300ff88' stroke-width='3'/%3E%3Ctext y='.9em' font-size='75' x='12'%3E🌐%3C/text%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Scenario Editor",
+      "url": "/?page=editor",
+      "description": "Build and run geopolitical scenarios"
+    },
+    {
+      "name": "Monte Carlo Risk",
+      "url": "/?page=mc",
+      "description": "Run 10k stochastic simulations"
+    }
+  ]
+}
