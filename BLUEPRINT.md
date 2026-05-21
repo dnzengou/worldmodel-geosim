@@ -1,4 +1,4 @@
-# 2030 GeoSim — Production Blueprint v2.1
+# 2030 GeoSim — Production Blueprint v2.2
 
 > Design authority: **Karpathy principles + caveman talk + fixclaude optimization**
 > Every line justifies existence. No speculation. Small diffs. Surgical only.
@@ -13,6 +13,23 @@
 | **Local (Streamlit)** | http://localhost:8501 |
 | **API Docs** | https://worldmodel-geosim.vercel.app/api/docs |
 | **GitHub** | https://github.com/dnzengou/worldmodel-geosim |
+
+---
+
+## Commit History
+
+| Hash | Type | Description |
+|---|---|---|
+| `cfedd05` | merge | Pull LICENSE + README from remote origin |
+| `82bc0d2` | feat | Vercel deployment — FastAPI serverless + lean SPA frontend |
+| `78219f6` | fix | Decouple world_model from Streamlit; fix Vercel static routing |
+| `ee7a800` | fix | Lazy-import pandas/numpy in simulate_tankers |
+| `3064757` | docs | Production blueprint v2.0 |
+| `67a8261` | feat | First-run onboarding UX — 3-step modal |
+| `119166d` | docs | Blueprint v2.1 — onboarding section + LOC update |
+| `(HEAD)` | chore | Archive genesis docs → docs/; blueprint v2.2 |
+
+**Deployment policy:** Vercel auto-picks up every push to `main` via GitHub integration. Manual trigger: `vercel --prod`.
 
 ---
 
@@ -41,7 +58,7 @@
 └─────────────────────────────────────┘
 ```
 
-### File structure (27 files, ~2600 LOC)
+### File structure (31 files, ~2600 LOC)
 
 ```
 worldmodel-geosim/
@@ -77,9 +94,14 @@ worldmodel-geosim/
 │   ├── manifest.json          PWA manifest
 │   └── sw.js                  Service worker (caches static, skips /api/)
 │
-└── static/                    Streamlit static serve (local)
-    ├── manifest.json
-    └── sw.js
+├── static/                    Streamlit static serve (local)
+│   ├── manifest.json
+│   └── sw.js
+│
+└── docs/                      Genesis reference (not deployed)
+    ├── genesis-blueprint.md   Original design blueprint
+    ├── genesis-prompt.md      Original build prompt (markdown)
+    └── genesis-prompt.txt     Original build prompt (plain text)
 ```
 
 ---
