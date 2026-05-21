@@ -1,4 +1,4 @@
-# 2030 GeoSim — Production Blueprint v2.2
+# 2030 GeoSim — Production Blueprint v2.3
 
 > Design authority: **Karpathy principles + caveman talk + fixclaude optimization**
 > Every line justifies existence. No speculation. Small diffs. Surgical only.
@@ -27,7 +27,8 @@
 | `3064757` | docs | Production blueprint v2.0 |
 | `67a8261` | feat | First-run onboarding UX — 3-step modal |
 | `119166d` | docs | Blueprint v2.1 — onboarding section + LOC update |
-| `(HEAD)` | chore | Archive genesis docs → docs/; blueprint v2.2 |
+| `(prev)` | chore | Archive genesis docs → docs/; blueprint v2.2 |
+| `(HEAD)` | feat | Scenario comparison view — 🆚 page, side-by-side gauges, diff table |
 
 **Deployment policy:** Vercel auto-picks up every push to `main` via GitHub integration. Manual trigger: `vercel --prod`.
 
@@ -58,7 +59,7 @@
 └─────────────────────────────────────┘
 ```
 
-### File structure (31 files, ~2600 LOC)
+### File structure (31 files, ~2730 LOC)
 
 ```
 worldmodel-geosim/
@@ -90,7 +91,7 @@ worldmodel-geosim/
 ├── public/                    Static SPA (served by Vercel CDN)
 │   ├── index.html             Minimal shell — Plotly CDN + deferred JS
 │   ├── style.css              CSS custom properties, dark theme, responsive
-│   ├── app.js                 Vanilla JS SPA (~900 LOC): state, API, 6 views, charts, onboarding
+│   ├── app.js                 Vanilla JS SPA (~1030 LOC): state, API, 7 views, charts, onboarding, compare
 │   ├── manifest.json          PWA manifest
 │   └── sw.js                  Service worker (caches static, skips /api/)
 │
@@ -303,13 +304,21 @@ Python runtime: Python 3.12 (Vercel auto-detect), `api/requirements.txt`
 Priority order (Karpathy: no speculative work, only if needed):
 
 1. **Real energy flow data** — integrate EIA or IEA API for live LNG prices
-2. **Scenario comparison view** — run two scenarios side-by-side (diff view)
+2. ~~**Scenario comparison view** — run two scenarios side-by-side (diff view)~~ ✅ **DONE v2.3** — 🆚 Compare page: dropdowns, parallel `/api/simulate`, gauges + diff table, export JSON
 3. **Audit log** — append every simulation result to `results.jsonl` for reproducibility
 4. **Time-series escalation** — chain N simulation steps to show escalation trajectory
 5. **Export PDF report** — one-click scenario briefing (Playwright or html2pdf)
 6. **Auth layer** — add Vercel Edge Config + simple token auth for enterprise use
 7. **Real tanker data** — integrate MarineTraffic or Kpler free tier API
 8. **RL agent integration** — wire up the DQN agent to War-Game mode for AI opponent
+
+### Comparison View Design
+- `🆚 Compare` nav entry (7th page, zero new API endpoints)
+- Two scenario dropdowns → `Promise.all([simulate(A), simulate(B)])` — parallel, ~200ms
+- Side-by-side Plotly gauge panels with risk-color top border
+- Diff table: Risk Score, Escalation, Infrastructure, Blockade, Energy Pressure — Δ column color-coded (red↑ / green↓ / muted≈)
+- Export diff as `compare_diff.json`
+- CSS: `.cmp-selector` 3-col grid, `.cmp-panels` 2-col, responsive collapse at 768px
 
 ---
 

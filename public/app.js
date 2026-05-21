@@ -17,6 +17,9 @@ const S = {
   worldState: null,
   loadedScenarioId: null,
   wargame: { us: 0.6, eu: 0.4, ru: 0.7, cn: 0.55, blockade: false, energy: false, deterrence: true },
+  compareA: null,
+  compareB: null,
+  cmpResult: null,
 };
 
 // ── API ────────────────────────────────────────────────────────────────────────
@@ -400,6 +403,90 @@ function pageGlobe() {
     </div>`;
 }
 
+function pageCompare() {
+  const options = S.scenarios.map(s => `<option value="${s.id}">${s.icon} ${s.name} (esc ${s.base_escalation.toFixed(2)})</option>`).join('');
+  const noScenarios = !S.scenarios.length ? '<p style="color:var(--amber)">Loading scenarios…</p>' : '';
+  return `<h1>🆚 Scenario Comparison</h1>
+    <p style="margin-bottom:1rem">Run two scenarios side-by-side and diff every risk metric.</p>
+    ${noScenarios}
+    <div class="cmp-selector">
+      <div>
+        <label class="field-label">Scenario A</label>
+        <select id="cmp-a" onchange="S.compareA=this.value">
+          <option value="">— Select —</option>${options}
+        </select>
+      </div>
+      <div class="cmp-vs">VS</div>
+      <div>
+        <label class="field-label">Scenario B</label>
+        <select id="cmp-b" onchange="S.compareB=this.value">
+          <option value="">— Select —</option>${options}
+        </select>
+      </div>
+    </div>
+    <div style="max-width:320px;margin:1rem 0">
+      <button class="btn" id="cmp-btn" onclick="runCompare()">▶ Compare</button>
+    </div>
+    <div id="cmp-results">${S.cmpResult ? renderCompareResults(S.cmpResult) : '<p>Select two scenarios above and run the comparison.</p>'}</div>`;
+}
+
+function renderCompareResults(r) {
+  const { a, b } = r;
+  const fields = [
+    ['Risk Score',     a.res.score,                               b.res.score],
+    ['Escalation',     a.res.state.escalation_level,              b.res.state.escalation_level],
+    ['Infrastructure', a.res.state.infrastructure_risk_index,     b.res.state.infrastructure_risk_index],
+    ['Blockade',       a.res.state.maritime_blockade_persistence, b.res.state.maritime_blockade_persistence],
+    ['Energy Pressure',a.res.state.energy_price_pressure,         b.res.state.energy_price_pressure],
+  ];
+  function delta(va, vb) {
+    const d = va - vb;
+    const sign = d > 0 ? '+' : '';
+    const col = d > 0.05 ? 'var(--red)' : d < -0.05 ? 'var(--green)' : 'var(--muted)';
+    const arrow = d > 0.05 ? ' ↑' : d < -0.05 ? ' ↓' : ' ≈';
+    return `<span style="color:${col}">${sign}${d.toFixed(3)}${arrow}</span>`;
+  }
+  const nameA = a.sc.name.length > 24 ? a.sc.name.slice(0, 22) + '…' : a.sc.name;
+  const nameB = b.sc.name.length > 24 ? b.sc.name.slice(0, 22) + '…' : b.sc.name;
+  return `<div class="cmp-panels">
+      <div class="cmp-panel" style="border-top:3px solid ${a.res.color}">
+        <div class="cmp-panel-header">
+          <span class="cmp-panel-icon">${a.sc.icon}</span>
+          <span class="cmp-panel-name">${a.sc.name}</span>
+        </div>
+        <div class="cmp-panel-meta"><span class="badge ${badgeClass(a.res.score)}">${a.res.label}</span> &nbsp; Score: <strong style="color:${a.res.color}">${fmt(a.res.score)}</strong></div>
+        <div class="chart-box" style="margin-top:0.75rem"><div id="cmp-gauge-a" style="height:220px"></div></div>
+      </div>
+      <div class="cmp-panel" style="border-top:3px solid ${b.res.color}">
+        <div class="cmp-panel-header">
+          <span class="cmp-panel-icon">${b.sc.icon}</span>
+          <span class="cmp-panel-name">${b.sc.name}</span>
+        </div>
+        <div class="cmp-panel-meta"><span class="badge ${badgeClass(b.res.score)}">${b.res.label}</span> &nbsp; Score: <strong style="color:${b.res.color}">${fmt(b.res.score)}</strong></div>
+        <div class="chart-box" style="margin-top:0.75rem"><div id="cmp-gauge-b" style="height:220px"></div></div>
+      </div>
+    </div>
+    <h2>Diff Table</h2>
+    <table class="cmp-table"><thead>
+      <tr><th>Metric</th><th>A — ${nameA}</th><th>B — ${nameB}</th><th>Δ (A − B)</th></tr>
+    </thead><tbody>
+      ${fields.map(([lbl, va, vb]) => `<tr>
+        <td>${lbl}</td>
+        <td style="color:${riskColor(va)}">${fmt(va)}</td>
+        <td style="color:${riskColor(vb)}">${fmt(vb)}</td>
+        <td>${delta(va, vb)}</td>
+      </tr>`).join('')}
+    </tbody></table>
+    <div style="margin-top:0.75rem">
+      <a class="dl-link" href="#" onclick="dl({a:{scenario:S.cmpResult.a.sc.id,result:S.cmpResult.a.res},b:{scenario:S.cmpResult.b.sc.id,result:S.cmpResult.b.res}},'compare_diff.json');return false">↓ Export diff JSON</a>
+    </div>`;
+}
+
+function drawCompareGauges(r) {
+  drawGauge('cmp-gauge-a', r.a.res.score, `${r.a.sc.icon} ${r.a.sc.name.slice(0,20)}`);
+  drawGauge('cmp-gauge-b', r.b.res.score, `${r.b.sc.icon} ${r.b.sc.name.slice(0,20)}`);
+}
+
 // ── Actions ────────────────────────────────────────────────────────────────────
 
 async function runSimulate() {
@@ -510,6 +597,42 @@ function loadScenario(id) {
   runSimulate().then(() => navigate('editor'));
 }
 
+async function runCompare() {
+  const idA = S.compareA || document.getElementById('cmp-a')?.value;
+  const idB = S.compareB || document.getElementById('cmp-b')?.value;
+  if (!idA || !idB) { alert('Select two scenarios to compare.'); return; }
+  if (idA === idB) { alert('Select two different scenarios.'); return; }
+  const btn = document.getElementById('cmp-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Comparing…'; }
+  const scA = S.scenarios.find(s => s.id === idA);
+  const scB = S.scenarios.find(s => s.id === idB);
+  if (!scA || !scB) { if (btn) { btn.disabled = false; btn.textContent = '▶ Compare'; } return; }
+  function toReq(sc) {
+    return {
+      base_escalation: sc.base_escalation,
+      triggers: { ...sc.triggers },
+      theories: { ...sc.theories },
+      nuclear_deterrence: sc.nuclear_deterrence,
+      aggression: { ...sc.aggression },
+    };
+  }
+  try {
+    const [resA, resB] = await Promise.all([
+      API.post('/api/simulate', toReq(scA)),
+      API.post('/api/simulate', toReq(scB)),
+    ]);
+    S.cmpResult = { a: { sc: scA, res: resA }, b: { sc: scB, res: resB } };
+    const el = document.getElementById('cmp-results');
+    if (el) el.innerHTML = renderCompareResults(S.cmpResult);
+    drawCompareGauges(S.cmpResult);
+  } catch(e) {
+    const el = document.getElementById('cmp-results');
+    if (el) el.innerHTML = `<p style="color:var(--red)">Error: ${e.message}</p>`;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '▶ Compare'; }
+  }
+}
+
 // ── NL command ─────────────────────────────────────────────────────────────────
 async function handleNL(text) {
   if (!text.trim()) return;
@@ -541,6 +664,7 @@ const PAGES = {
   wargame:   { icon: '⚔️', label: 'War-Game Mode', render: pageWargame },
   mc:        { icon: '📊', label: 'Monte Carlo', render: pageMC },
   globe:     { icon: '🌍', label: '3D Globe', render: pageGlobe },
+  compare:   { icon: '🆚', label: 'Compare', render: pageCompare },
 };
 
 function navigate(page) {
@@ -589,6 +713,7 @@ function postRender(page) {
       });
     }
   }
+  if (page === 'compare' && S.cmpResult) drawCompareGauges(S.cmpResult);
 }
 
 function renderCPTable() {
