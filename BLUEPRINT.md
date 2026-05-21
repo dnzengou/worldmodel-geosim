@@ -1,4 +1,4 @@
-# 2030 GeoSim — Production Blueprint v2.0
+# 2030 GeoSim — Production Blueprint v2.1
 
 > Design authority: **Karpathy principles + caveman talk + fixclaude optimization**
 > Every line justifies existence. No speculation. Small diffs. Surgical only.
@@ -41,7 +41,7 @@
 └─────────────────────────────────────┘
 ```
 
-### File structure (27 files)
+### File structure (27 files, ~2600 LOC)
 
 ```
 worldmodel-geosim/
@@ -73,7 +73,7 @@ worldmodel-geosim/
 ├── public/                    Static SPA (served by Vercel CDN)
 │   ├── index.html             Minimal shell — Plotly CDN + deferred JS
 │   ├── style.css              CSS custom properties, dark theme, responsive
-│   ├── app.js                 Vanilla JS SPA (~700 LOC): state, API, 6 views, charts
+│   ├── app.js                 Vanilla JS SPA (~900 LOC): state, API, 6 views, charts, onboarding
 │   ├── manifest.json          PWA manifest
 │   └── sw.js                  Service worker (caches static, skips /api/)
 │
@@ -167,6 +167,57 @@ composite_risk = 0.4*esc + 0.25*infra + 0.20*blockade + 0.15*energy
 | `multi_front_crisis` | Multi-Front Crisis (Worst Case) | 0.90 | all + deterrence OFF |
 | `arctic_lng` | Arctic LNG Race 2030 | 0.30 | none |
 | `stable_baseline` | Baseline Stability 2030 | 0.15 | none |
+
+---
+
+## Onboarding UX
+
+Inspired by **WorldMonitor** (`worldmonitor-core.vercel.app`) hero pattern: minimal friction, immediate value, no signup required, quantified stats upfront.
+
+### Design principles
+- **First-run only** — `localStorage` flag `geosim_onboarded_v2` prevents repeat shows
+- **Always skippable** — "Skip ✕" button top-right, Esc key, backdrop click all dismiss
+- **Zero blocking** — `requestAnimationFrame` defers overlay until page fully paints; app is visible behind glassmorphism backdrop
+- **Immediate value in step 2** — loading a scenario closes the modal and runs the simulation; user lands directly in results
+- **Keyboard friendly** — Esc dismisses, natural tab order through buttons
+
+### 3-step flow
+
+| Step | Focus | Primary action |
+|---|---|---|
+| **1 — Welcome** | Hero: tagline + 3 stat cards + 4 feature bullets + trust signal | "Pick a scenario →" |
+| **2 — Scenario picker** | 3 featured crisis cards (Taiwan, Hormuz, Multi-Front), one-click load | Card click → load + simulate → exit |
+| **3 — NL primer** | Terminal typewriter cycling through 5 example commands; clickable chip presets | "Launch GeoSim →" |
+
+### Step 1 — stat cards (WorldMonitor pattern)
+```
+┌──────────┐  ┌──────────┐  ┌──────────┐
+│   10k    │  │    8     │  │  ~200ms  │
+│MC runs   │  │ scenarios│  │ sim time │
+└──────────┘  └──────────┘  └──────────┘
+```
+Trust line: `No account required · Free forever · No data sent`
+
+### Step 3 — typewriter commands cycled
+```
+❯ taiwan blockade worst case▌
+→ Triggers: chokepoint + energy | Esc: 0.85
+
+❯ russia high aggression▌
+→ RU aggression: 0.90
+
+❯ nuclear deterrence at 80%▌
+→ Deterrence ON | base_escalation: 0.80
+```
+Chip presets let users click to preview any command without dismissing the modal.
+
+### Implementation (pure vanilla JS, no deps)
+- `OB` state object: step, localStorage key, featured scenarios, NL commands
+- `_obRender(step)` — re-renders the overlay for the current step (single DOM write)
+- `_obTypeChar` / `_obDeleteChar` — typewriter via `setTimeout` chain, cancellable
+- `obLoadScenario(id)` — calls existing `loadScenario()` then `obFinish()` in one line
+- All CSS in `style.css` under `/* ── Onboarding overlay ── */` block (~130 LOC)
+- JS in `app.js` under `// ── Onboarding ──` block (~200 LOC)
 
 ---
 
