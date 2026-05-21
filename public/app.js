@@ -616,6 +616,210 @@ function renderSidebarSummary() {
     <br><span style="color:var(--dim)">${trigs || 'no triggers'}</span>`;
 }
 
+// ── Onboarding ─────────────────────────────────────────────────────────────────
+const OB = {
+  step: 1,
+  total: 3,
+  KEY: 'geosim_onboarded_v2',
+  // Featured scenarios for step 2 (subset of full library)
+  FEATURED: [
+    { id: 'taiwan_blockade',   icon: '🚢', name: 'Taiwan Strait Blockade', esc: 0.75, color: '#ff6b35' },
+    { id: 'hormuz_closure',    icon: '⛽', name: 'Hormuz Closure Crisis',   esc: 0.70, color: '#ff6b35' },
+    { id: 'multi_front_crisis',icon: '⚠️', name: 'Multi-Front Crisis',      esc: 0.90, color: '#ff3855' },
+  ],
+  // NL commands for step 3 typewriter
+  CMDS: [
+    { cmd: 'taiwan blockade worst case',       result: '→ Triggers: chokepoint + energy | Esc: 0.85' },
+    { cmd: 'russia high aggression',           result: '→ RU aggression: 0.90' },
+    { cmd: 'nuclear deterrence at 80%',        result: '→ Deterrence ON | base_escalation: 0.80' },
+    { cmd: 'run monte carlo',                  result: '→ Navigating to Monte Carlo view…' },
+    { cmd: 'best case stable baseline',        result: '→ No triggers | base_escalation: 0.10' },
+  ],
+  _twTimer: null,
+  _twIdx: 0,
+  _twCharIdx: 0,
+};
+
+function onboardInit() {
+  if (localStorage.getItem(OB.KEY)) return; // already onboarded
+  _obRender(1);
+  document.addEventListener('keydown', _obKeydown);
+}
+
+function _obKeydown(e) {
+  if (e.key === 'Escape') obSkip();
+}
+
+function _obRender(step) {
+  OB.step = step;
+  // Remove existing overlay
+  document.getElementById('ob-overlay')?.remove();
+
+  const html = `
+<div class="ob-overlay" id="ob-overlay" onclick="_obOverlayClick(event)">
+  <div class="ob-modal" role="dialog" aria-modal="true" aria-label="Welcome to GeoSim">
+    <button class="ob-skip" onclick="obSkip()">Skip ✕</button>
+
+    <!-- Step 1: Welcome / hero -->
+    <div class="ob-step ${step===1?'ob-active':''}" id="ob-s1">
+      <span class="ob-hero-icon">🌐</span>
+      <h1 class="ob-title">Welcome to <span>2030 GeoSim</span></h1>
+      <p class="ob-tagline">Model geopolitical risk · Run war games · Predict escalation</p>
+      <div class="ob-stats">
+        <div class="ob-stat"><div class="ob-stat-val">10k</div><div class="ob-stat-lbl">MC runs / sim</div></div>
+        <div class="ob-stat"><div class="ob-stat-val">8</div><div class="ob-stat-lbl">Crisis scenarios</div></div>
+        <div class="ob-stat"><div class="ob-stat-val">~200ms</div><div class="ob-stat-lbl">Simulation time</div></div>
+      </div>
+      <ul class="ob-features">
+        <li>⚔️ &nbsp;War-game any crisis with per-actor aggression controls</li>
+        <li>📊 &nbsp;Monte Carlo risk — 10k stochastic runs, instant histogram</li>
+        <li>⌨ &nbsp;Natural language — type <em>"taiwan blockade"</em> to simulate</li>
+        <li>🌍 &nbsp;3D energy flow globe with live chokepoint risk overlay</li>
+      </ul>
+      <p class="ob-trust">No account required · <span>Free forever</span> · No data sent</p>
+      <div class="ob-actions">
+        <button class="btn" onclick="obNext()">Pick a scenario →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Scenario picker -->
+    <div class="ob-step ${step===2?'ob-active':''}" id="ob-s2">
+      <h2 style="margin-top:0;border:none;padding:0;font-size:1.1rem;color:var(--text)">Choose your first scenario</h2>
+      <p style="margin:0.3rem 0 0.25rem;font-size:0.78rem">Load a pre-built crisis and see the engine in action — or skip to build your own.</p>
+      <div class="ob-sc-grid">
+        ${OB.FEATURED.map(s => `
+        <div class="ob-sc-card" onclick="obLoadScenario('${s.id}')">
+          <span class="ob-sc-card-icon">${s.icon}</span>
+          <div class="ob-sc-card-name">${s.name}</div>
+          <div class="ob-sc-card-esc">Esc ${s.esc.toFixed(2)}</div>
+          <div class="ob-sc-bar"><div class="ob-sc-bar-fill" style="width:${Math.round(s.esc*100)}%;background:${s.color}"></div></div>
+        </div>`).join('')}
+      </div>
+      <div class="ob-actions">
+        <button class="btn-ghost" onclick="obPrev()">← Back</button>
+        <button class="btn" onclick="obNext()">Learn NL commands →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: NL command primer -->
+    <div class="ob-step ${step===3?'ob-active':''}" id="ob-s3">
+      <h2 style="margin-top:0;border:none;padding:0;font-size:1.1rem;color:var(--text)">Command in plain English</h2>
+      <p style="margin:0.3rem 0 0.6rem;font-size:0.78rem">The sidebar command bar understands natural language — no syntax to learn.</p>
+      <div class="ob-terminal">
+        <div class="ob-terminal-header">
+          <span class="ob-dot-r"></span><span class="ob-dot-y"></span><span class="ob-dot-g"></span>
+          <span class="ob-terminal-label">NL Command Bar</span>
+        </div>
+        <div class="ob-terminal-prompt"><span id="ob-tw" class="ob-typewriter"></span><span class="ob-cursor"></span></div>
+        <div class="ob-terminal-result" id="ob-tw-result">​</div>
+      </div>
+      <p style="font-size:0.73rem;color:var(--muted);margin-bottom:0.5rem">Try any of these — click to preview:</p>
+      <div class="ob-nl-chips">
+        ${OB.CMDS.map((c,i) => `<button class="ob-chip" onclick="obPreviewCmd(${i})">${c.cmd}</button>`).join('')}
+      </div>
+      <div class="ob-actions">
+        <button class="btn-ghost" onclick="obPrev()">← Back</button>
+        <button class="btn" onclick="obFinish()">Launch GeoSim →</button>
+      </div>
+    </div>
+
+    <!-- Dot indicators -->
+    <div class="ob-dots">
+      ${[1,2,3].map(i=>`<span class="ob-dot${i===step?' ob-dot-active':''}"></span>`).join('')}
+    </div>
+    <p class="ob-esc-hint"><kbd>Esc</kbd> to dismiss at any time</p>
+  </div>
+</div>`;
+
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  // Start typewriter on step 3
+  if (step === 3) _obStartTypewriter();
+  else _obStopTypewriter();
+}
+
+function _obOverlayClick(e) {
+  // Dismiss if clicking backdrop (not modal)
+  if (e.target.classList.contains('ob-overlay')) obSkip();
+}
+
+function obNext() {
+  if (OB.step < OB.total) _obRender(OB.step + 1);
+  else obFinish();
+}
+function obPrev() {
+  if (OB.step > 1) _obRender(OB.step - 1);
+}
+function obSkip() {
+  _obClose();
+}
+function obFinish() {
+  localStorage.setItem(OB.KEY, '1');
+  _obClose();
+}
+function _obClose() {
+  _obStopTypewriter();
+  document.removeEventListener('keydown', _obKeydown);
+  const el = document.getElementById('ob-overlay');
+  if (el) {
+    el.style.animation = 'ob-fadein 0.2s ease reverse';
+    setTimeout(() => el.remove(), 200);
+  }
+}
+function obLoadScenario(id) {
+  obFinish(); // mark as done, close overlay
+  loadScenario(id); // calls existing loadScenario function
+}
+function obPreviewCmd(idx) {
+  _obStopTypewriter();
+  const { cmd, result } = OB.CMDS[idx];
+  const tw = document.getElementById('ob-tw');
+  const res = document.getElementById('ob-tw-result');
+  if (tw) tw.textContent = cmd;
+  if (res) { res.style.opacity = '0'; setTimeout(() => { res.textContent = result; res.style.opacity = '1'; }, 150); }
+}
+
+// Typewriter cycle: types each command, pauses, deletes, moves to next
+function _obStartTypewriter() {
+  OB._twIdx = 0; OB._twCharIdx = 0;
+  _obTypeChar();
+}
+function _obStopTypewriter() {
+  clearTimeout(OB._twTimer);
+}
+function _obTypeChar() {
+  const tw = document.getElementById('ob-tw');
+  const res = document.getElementById('ob-tw-result');
+  if (!tw) return;
+  const { cmd, result } = OB.CMDS[OB._twIdx % OB.CMDS.length];
+  if (OB._twCharIdx <= cmd.length) {
+    tw.textContent = cmd.slice(0, OB._twCharIdx);
+    if (res && OB._twCharIdx === cmd.length) {
+      setTimeout(() => { if (res) { res.textContent = result; } }, 200);
+    }
+    OB._twCharIdx++;
+    OB._twTimer = setTimeout(_obTypeChar, OB._twCharIdx <= cmd.length ? 55 : 0);
+  } else {
+    // Pause at end, then delete
+    OB._twTimer = setTimeout(_obDeleteChar, 1600);
+  }
+}
+function _obDeleteChar() {
+  const tw = document.getElementById('ob-tw');
+  const res = document.getElementById('ob-tw-result');
+  if (!tw) return;
+  const txt = tw.textContent;
+  if (txt.length > 0) {
+    tw.textContent = txt.slice(0, -1);
+    if (txt.length === 1 && res) res.textContent = '​'; // clear result
+    OB._twTimer = setTimeout(_obDeleteChar, 28);
+  } else {
+    OB._twIdx++;
+    OB._twCharIdx = 0;
+    OB._twTimer = setTimeout(_obTypeChar, 400);
+  }
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────────
 async function init() {
   // Build sidebar
@@ -651,6 +855,9 @@ async function init() {
 
   // Render initial page
   navigate(S.page);
+
+  // First-run onboarding — shown after page renders so app is visible behind overlay
+  requestAnimationFrame(onboardInit);
 }
 
 document.addEventListener('DOMContentLoaded', init);

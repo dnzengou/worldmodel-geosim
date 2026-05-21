@@ -258,3 +258,173 @@ tr:last-child td { border-bottom: none; }
 @media (max-width: 480px) {
   #sidebar { display: none; }
 }
+
+/* ── Onboarding overlay ─────────────────────────────────────────────────────── */
+.ob-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(5, 8, 18, 0.88);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  animation: ob-fadein 0.25s ease;
+}
+@keyframes ob-fadein { from { opacity: 0; } to { opacity: 1; } }
+
+.ob-modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 0 60px rgba(0, 255, 136, 0.08), 0 24px 64px rgba(0,0,0,0.6);
+  max-width: 520px; width: 100%;
+  padding: 2rem 2rem 1.5rem;
+  position: relative;
+  animation: ob-slide 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+@keyframes ob-slide { from { transform: translateY(18px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.ob-skip {
+  position: absolute; top: 1rem; right: 1rem;
+  background: none; border: none; color: var(--dim);
+  font-family: var(--font); font-size: 0.7rem; cursor: pointer;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  transition: color var(--trans);
+}
+.ob-skip:hover { color: var(--muted); }
+
+/* Step visibility */
+.ob-step { display: none; }
+.ob-step.ob-active { display: block; animation: ob-slide 0.22s ease; }
+
+/* Step 1 — Hero */
+.ob-hero-icon { font-size: 3rem; text-align: center; display: block; margin-bottom: 0.5rem; }
+.ob-title {
+  text-align: center; color: var(--green);
+  font-size: 1.5rem; font-weight: 700; letter-spacing: 0.04em;
+  margin-bottom: 0.3rem;
+}
+.ob-title span { color: var(--text); }
+.ob-tagline { text-align: center; color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+
+.ob-stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem; margin-bottom: 1.25rem;
+}
+.ob-stat {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.75rem;
+  text-align: center;
+}
+.ob-stat-val { color: var(--green); font-size: 1.4rem; font-weight: 700; }
+.ob-stat-lbl { color: var(--dim); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.15rem; }
+
+.ob-features {
+  list-style: none; margin-bottom: 1.25rem;
+  display: flex; flex-direction: column; gap: 0.45rem;
+}
+.ob-features li {
+  color: var(--muted); font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+  border-left: 2px solid var(--border);
+  line-height: 1.4;
+}
+.ob-features li:hover { border-left-color: var(--green); color: var(--text); }
+
+.ob-trust {
+  text-align: center; color: var(--dim);
+  font-size: 0.65rem; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-bottom: 1.25rem;
+}
+.ob-trust span { color: var(--green); }
+
+/* Step 2 — Scenario picker */
+.ob-sc-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.6rem; margin: 0.75rem 0 1rem;
+}
+.ob-sc-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 0.75rem 0.6rem;
+  cursor: pointer; text-align: center;
+  transition: border-color var(--trans), background var(--trans), transform var(--trans);
+}
+.ob-sc-card:hover { border-color: var(--green); background: #0f1f1a; transform: translateY(-2px); }
+.ob-sc-card-icon { font-size: 1.6rem; display: block; margin-bottom: 0.3rem; }
+.ob-sc-card-name { color: var(--text); font-size: 0.72rem; font-weight: 600; line-height: 1.3; margin-bottom: 0.25rem; }
+.ob-sc-card-esc { color: var(--dim); font-size: 0.62rem; }
+.ob-sc-bar { background: var(--border); border-radius: 2px; height: 2px; margin-top: 0.4rem; overflow: hidden; }
+.ob-sc-bar-fill { height: 2px; border-radius: 2px; }
+
+/* Step 3 — NL terminal */
+.ob-terminal {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 1rem;
+  margin: 0.75rem 0 1.25rem; font-family: var(--font);
+}
+.ob-terminal-header {
+  display: flex; align-items: center; gap: 0.4rem;
+  margin-bottom: 0.6rem; padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.ob-dot-r { width: 8px; height: 8px; border-radius: 50%; background: #ff3855; }
+.ob-dot-y { width: 8px; height: 8px; border-radius: 50%; background: #ffa500; }
+.ob-dot-g { width: 8px; height: 8px; border-radius: 50%; background: #00ff88; }
+.ob-terminal-label { color: var(--dim); font-size: 0.65rem; margin-left: auto; }
+.ob-terminal-prompt {
+  color: var(--dim); font-size: 0.78rem; display: flex; align-items: center; gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+.ob-terminal-prompt::before { content: '❯'; color: var(--green); }
+.ob-typewriter { color: var(--cyan); font-size: 0.82rem; min-height: 1.1rem; }
+.ob-cursor { display: inline-block; width: 7px; height: 1em; background: var(--cyan); vertical-align: text-bottom; animation: blink 0.9s step-end infinite; margin-left: 1px; }
+@keyframes blink { 50% { opacity: 0; } }
+.ob-terminal-result {
+  margin-top: 0.6rem; padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--green); font-size: 0.72rem;
+  min-height: 1.2rem; transition: opacity 0.2s;
+}
+
+.ob-nl-chips {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem;
+}
+.ob-chip {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 4px; color: var(--muted);
+  font-size: 0.68rem; padding: 0.25rem 0.6rem;
+  cursor: pointer; transition: all var(--trans); font-family: var(--font);
+}
+.ob-chip:hover { border-color: var(--cyan); color: var(--cyan); }
+
+/* Actions row */
+.ob-actions {
+  display: flex; gap: 0.6rem; align-items: center;
+  margin-top: 0.75rem;
+}
+.ob-actions .btn { flex: 1; }
+.btn-ghost {
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--muted);
+  cursor: pointer; font-family: var(--font);
+  font-size: 0.75rem; padding: 0.45rem 1rem;
+  transition: all var(--trans);
+}
+.btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+/* Step dots */
+.ob-dots {
+  display: flex; justify-content: center; gap: 0.4rem;
+  margin-top: 1.25rem;
+}
+.ob-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); transition: all var(--trans);
+}
+.ob-dot.ob-dot-active { background: var(--green); width: 18px; border-radius: 3px; }
+
+/* Kbd hint */
+.ob-esc-hint { text-align: center; color: var(--dim); font-size: 0.62rem; margin-top: 0.5rem; }
+kbd {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 3px;
+  color: var(--muted); font-family: var(--font); font-size: 0.6rem;
+  padding: 1px 4px;
+}
