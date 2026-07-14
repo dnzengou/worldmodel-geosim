@@ -5,12 +5,12 @@ Pure computation: no Streamlit, no heavy state.
 import sys
 import json
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict
 
 # Make src/ importable from api/
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from mangum import Mangum
@@ -26,6 +26,7 @@ from src.nlp.parser import parse_command
 
 app = FastAPI(title="GeoSim API", version="2.0", docs_url="/api/docs")
 
+# Public read-only sim API — wildcard CORS is intentional (no auth, no PII).
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -33,7 +34,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-_SCENARIOS_PATH = Path(__file__).parent.parent / "data" / "scenarios.json"
+# Load scenarios once at cold start — the file never changes at runtime.
+_SCENARIOS = json.loads(
+    (Path(__file__).parent.parent / "data" / "scenarios.json").read_text(encoding="utf-8")
+)
 
 
 # ── Request models ─────────────────────────────────────────────────────────────
@@ -70,7 +74,7 @@ def health():
 
 @app.get("/api/scenarios")
 def get_scenarios():
-    return json.loads(_SCENARIOS_PATH.read_text())
+    return _SCENARIOS
 
 
 @app.get("/api/world-state")
