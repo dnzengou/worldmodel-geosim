@@ -55,6 +55,14 @@ function dl(data, fname) {
   a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(data, null, 2));
   a.download = fname; a.click();
 }
+function showError(el, msg) {
+  if (!el) return;
+  el.textContent = '';
+  const p = document.createElement('p');
+  p.style.color = 'var(--red)';
+  p.textContent = 'Error: ' + msg;
+  el.appendChild(p);
+}
 
 // ── Plotly chart helpers ───────────────────────────────────────────────────────
 const LAYOUT_BASE = {
@@ -501,8 +509,7 @@ async function runSimulate() {
     // Update sidebar
     renderSidebarSummary();
   } catch(e) {
-    const el = document.getElementById('sim-results');
-    if (el) el.innerHTML = `<p style="color:var(--red)">Error: ${e.message}</p>`;
+    showError(document.getElementById('sim-results'), e.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '▶ Simulate Step'; }
   }
@@ -570,8 +577,7 @@ async function runMC() {
     if (el) el.innerHTML = renderMCResults(res);
     drawHistogram('mc-hist', res);
   } catch(e) {
-    const el = document.getElementById('mc-results');
-    if (el) el.innerHTML = `<p style="color:var(--red)">Error: ${e.message}</p>`;
+    showError(document.getElementById('mc-results'), e.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '▶ Run Simulation'; }
   }
@@ -626,8 +632,7 @@ async function runCompare() {
     if (el) el.innerHTML = renderCompareResults(S.cmpResult);
     drawCompareGauges(S.cmpResult);
   } catch(e) {
-    const el = document.getElementById('cmp-results');
-    if (el) el.innerHTML = `<p style="color:var(--red)">Error: ${e.message}</p>`;
+    showError(document.getElementById('cmp-results'), e.message);
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '▶ Compare'; }
   }
