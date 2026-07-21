@@ -1,4 +1,4 @@
-# 2030 GeoSim — Production Blueprint v2.3
+# 2030 GeoSim — Production Blueprint v2.4
 
 > Design authority: **Karpathy principles + caveman talk + fixclaude optimization**
 > Every line justifies existence. No speculation. Small diffs. Surgical only.
@@ -28,7 +28,9 @@
 | `67a8261` | feat | First-run onboarding UX — 3-step modal |
 | `119166d` | docs | Blueprint v2.1 — onboarding section + LOC update |
 | `(prev)` | chore | Archive genesis docs → docs/; blueprint v2.2 |
-| `(HEAD)` | feat | Scenario comparison view — 🆚 page, side-by-side gauges, diff table |
+| `(prev)` | feat | Scenario comparison view — 🆚 page, side-by-side gauges, diff table |
+| `(prev)` | security+hygiene | XSS fix, CSP + Vercel security headers, pinned deps, drop scipy |
+| `(HEAD)` | feat | Immersive 3D Globe — Three.js earth (texture + specular + clouds + rim glow) with lat/lon chokepoint pins + great-circle route arcs; lazy-loaded on `/globe` nav |
 
 **Deployment policy:** Vercel auto-picks up every push to `main` via GitHub integration. Manual trigger: `vercel --prod`.
 

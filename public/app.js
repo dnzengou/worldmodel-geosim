@@ -124,41 +124,8 @@ function drawStrategyChart(elId, history) {
   }, { responsive: true });
 }
 
-function drawGlobe(elId, worldState) {
-  if (!document.getElementById(elId) || !worldState) return;
-  const traces = [];
-  // Energy route arcs
-  (worldState.energy_routes || []).forEach(r => {
-    traces.push({
-      type: 'scattergeo', mode: 'lines', showlegend: false,
-      lon: [r.from[0], r.to[0], null], lat: [r.from[1], r.to[1], null],
-      line: { width: 1.5, color: '#00d4ff' }, opacity: 0.5,
-    });
-  });
-  // Chokepoints
-  const cp = worldState.chokepoints || {};
-  const cpNames = Object.keys(cp);
-  traces.push({
-    type: 'scattergeo', mode: 'markers+text',
-    lon: cpNames.map(k => cp[k].lon), lat: cpNames.map(k => cp[k].lat),
-    text: cpNames, textposition: 'top center',
-    textfont: { color: '#e2e8f0', size: 10 },
-    marker: { size: 12, color: cpNames.map(k => riskColor(cp[k].risk)), symbol: 'diamond' },
-    name: 'Chokepoints',
-    hovertemplate: '<b>%{text}</b><extra></extra>',
-  });
-  Plotly.react(elId, traces, {
-    ...LAYOUT_BASE, height: 520, margin: { l: 0, r: 0, t: 0, b: 0 },
-    geo: {
-      projection: { type: 'orthographic' },
-      showland: true, landcolor: '#111827',
-      showocean: true, oceancolor: '#0a0e1a',
-      showcoastlines: true, coastlinecolor: '#1e2a3a',
-      showcountries: true, countrycolor: '#1e2a3a',
-      bgcolor: '#0a0e1a',
-    },
-  }, { responsive: true });
-}
+// 3D immersive globe lives in ./globe.js — lazy-loaded on first /globe navigation.
+let _globeDispose = null;
 
 function drawRiskMatrix(elId, scenarios) {
   if (!document.getElementById(elId)) return;
@@ -674,12 +641,14 @@ const PAGES = {
 
 function navigate(page) {
   if (!PAGES[page]) return;
+  // Dispose the 3D globe (WebGL context + RAF loop + textures) when leaving that page.
+  if (S.page === 'globe' && page !== 'globe' && _globeDispose) {
+    _globeDispose();
+    _globeDispose = null;
+  }
   S.page = page;
-  // Update nav buttons
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
-  // Render content
   document.getElementById('content').innerHTML = PAGES[page].render();
-  // Post-render: init charts & async loads
   postRender(page);
 }
 
@@ -707,16 +676,23 @@ function postRender(page) {
     }
   }
   if (page === 'globe') {
-    if (S.worldState) {
-      drawGlobe('globe-chart', S.worldState);
+    const mount = (ws) => {
+      S.worldState = ws;
       renderCPTable();
-    } else {
-      API.get('/api/world-state').then(ws => {
-        S.worldState = ws;
-        drawGlobe('globe-chart', ws);
-        renderCPTable();
-      });
-    }
+      if (_globeDispose) { _globeDispose(); _globeDispose = null; }
+      import('./globe.js')
+        .then(m => { _globeDispose = m.initGlobe('globe-chart', ws); })
+        .catch(err => {
+          console.error('globe module failed:', err);
+          const el = document.getElementById('globe-chart');
+          if (el) el.textContent = 'Globe engine failed to load.';
+        });
+    };
+    if (S.worldState) mount(S.worldState);
+    else API.get('/api/world-state').then(mount).catch(() => {
+      const el = document.getElementById('globe-chart');
+      if (el) el.textContent = 'Failed to load world state.';
+    });
   }
   if (page === 'compare' && S.cmpResult) drawCompareGauges(S.cmpResult);
 }
