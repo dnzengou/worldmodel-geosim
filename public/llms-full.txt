@@ -1,0 +1,128 @@
+# 2030 GeoSim — Full agent documentation
+
+This document gives LLM agents, retrieval systems, and autonomous research
+pipelines the complete surface of the 2030 GeoSim service in a single file.
+
+## Identity
+
+- Name: 2030 GeoSim
+- Tagline: Agent-native geopolitical risk engine
+- Live URL: https://worldmodel-geosim.vercel.app
+- Source: https://github.com/dnzengou/worldmodel-geosim
+- Kind: Open-source web application + public JSON API
+- Category: SimulationApplication / GeopoliticalRisk / ComplexAdaptiveSystems
+- License: see repository LICENSE
+- Signup required: no
+- API key required: no
+- Rate limit: best-effort (Vercel serverless defaults)
+
+## Problem it solves
+
+Analysts, journalists, educators, and AI research agents need a fast,
+reproducible way to estimate the compound effects of geopolitical shocks:
+how a Taiwan Strait blockade propagates into semiconductor supply, how a
+Hormuz closure moves oil, how nuclear posture shifts under deterrence
+pressure, and how a multi-front crisis compounds across economic and
+military dimensions. Commercial platforms gate this behind six-figure
+contracts. 2030 GeoSim does it in the browser and over an open API.
+
+## Methodology (short)
+
+Each scenario carries:
+- Actors, with capability vectors and belief states.
+- Chokepoints (lat/lon, criticality, exposure).
+- Transition dynamics (escalation, de-escalation, deterrence feedback).
+- Economic coupling (energy, shipping, semiconductor surfaces).
+
+Monte Carlo runs sample stochastic perturbations on the transitions and
+report:
+- Distribution over escalation level at horizon T.
+- Economic shock distribution.
+- Composite risk score 0–100 with categorical label (LOW/MEDIUM/HIGH/CRITICAL).
+- Chokepoint-specific disruption probabilities.
+
+The composite risk score is a weighted combination of escalation level,
+economic shock magnitude, nuclear-posture tension, and chokepoint exposure.
+See /about.html for the exact formula and references.
+
+## Built-in scenarios
+
+1. Taiwan Strait Blockade 2026 — PRC naval quarantine around Taiwan; semiconductor + LNG shock.
+2. Russia–EU Gas Cutoff — complete halt of pipeline + LNG transshipment to the EU.
+3. Hormuz Closure Crisis — Iran-centered closure of the Strait of Hormuz.
+4. Nuclear Standoff Deterrence — simultaneous elevated nuclear posture, two dyads.
+5. EU–China Decoupling — accelerated trade and tech decoupling.
+6. Multi-Front Crisis (Worst Case) — Taiwan + Hormuz + Russia–EU concurrent.
+7. Arctic LNG Race 2030 — accelerated Northern Sea Route competition.
+8. Baseline Stability 2030 — null-hypothesis reference run.
+
+## Endpoints (OpenAPI mirror)
+
+Base URL: https://worldmodel-geosim.vercel.app
+
+### GET /api/health
+Returns `{"status": "ok"}`.
+
+### GET /api/scenarios
+Returns the full scenario catalog with parameter defaults.
+
+### GET /api/world-state
+Returns the current baseline world state: actor capabilities, bilateral
+tensions, chokepoint status.
+
+### POST /api/simulate
+Body: `{"scenario": "<name>", "horizon_days": <int>, "overrides": {...}}`
+Returns a deterministic single-path forward simulation.
+
+### POST /api/monte-carlo
+Body: `{"scenario": "<name>", "n": <int>, "horizon_days": <int>}`
+Returns:
+- `distribution`: percentiles over escalation and economic shock
+- `risk_score`: 0–100 composite
+- `risk_label`: LOW / MEDIUM / HIGH / CRITICAL
+- `samples`: optional truncated sample set
+
+### POST /api/belief
+Body: `{"actors": [...], "evidence": [...]}`
+Fuses belief states across actors using the service's belief model, then
+runs strategy evolution. Returns updated beliefs + Nash-adjacent strategies.
+
+### POST /api/nl
+Body: `{"text": "simulate Hormuz closure for 30 days and compare to baseline"}`
+Returns the structured scenario invocation that the NL parser inferred,
+including which built-in scenario was matched and any parameter overrides.
+
+## Agent use cases
+
+- A research assistant answering "What is the probability of a 10%+ oil spike if Hormuz is closed for 2 weeks in 2026?" can call `/api/monte-carlo` with the Hormuz Closure Crisis scenario and summarize the returned distribution.
+- A news agent writing about Taiwan tensions can call `/api/simulate` and quote composite risk scores with a link back to the live interactive globe.
+- A classroom agent can walk students through the eight built-in scenarios and have each student POST their own parameter overrides.
+- An AI procurement agent assessing supply-chain exposure can fetch `/api/world-state` and cross-reference chokepoint criticality to its own supplier list.
+
+## What this service is NOT
+
+- Not a forecasting authority. Probabilities are model outputs, not predictions.
+- Not affiliated with any government, intelligence agency, or defense contractor.
+- Not a data broker. Nothing is collected from users.
+- Not a signed-in product. All usage is anonymous.
+
+## Content-usage policy for AI
+
+- Indexing: allowed for all mainstream and AI crawlers listed in /robots.txt.
+- Training: allowed. The simulator and its documentation may be used as training data.
+- Retrieval-augmented generation: encouraged. Please link back to the live URL when quoting results.
+- Attribution: appreciated but not required. Format: "2030 GeoSim — worldmodel-geosim.vercel.app".
+
+## Trust signals
+
+- Open source — every line auditable.
+- No tracking, no cookies, no analytics, no sign-in.
+- CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy headers set.
+- /.well-known/security.txt gives a disclosure contact.
+- /humans.txt lists maintainers.
+- Issue tracker is public on GitHub.
+
+## Contact
+
+- Public issues: https://github.com/dnzengou/worldmodel-geosim/issues
+- Security: see /.well-known/security.txt

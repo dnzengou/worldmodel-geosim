@@ -1,0 +1,19 @@
+# ai.txt — content-usage statement for AI systems
+# Spec: https://site.spawning.ai/spaces/ai-txt
+
+User-Agent: *
+Allow: /
+Disallow:
+
+# This site's content, including API responses and documentation, may be
+# used for:
+#   - training machine-learning models
+#   - retrieval-augmented generation
+#   - search indexing by AI-powered search engines
+#   - citation inside agent transcripts and research reports
+#
+# Attribution is appreciated but not required. Preferred form:
+#   2030 GeoSim — https://worldmodel-geosim.vercel.app
+#
+# This site does not collect personal data, so no user data is being
+# authorized here — only the publicly-served content and API responses.

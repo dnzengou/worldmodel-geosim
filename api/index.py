@@ -24,7 +24,19 @@ from src.simulation.belief import fuse_beliefs, run_strategy_evolution
 from src.simulation.world_model import get_world_state
 from src.nlp.parser import parse_command
 
-app = FastAPI(title="GeoSim API", version="2.0", docs_url="/api/docs")
+app = FastAPI(
+    title="GeoSim API",
+    version="2.4",
+    description=(
+        "Agent-native geopolitical risk simulation. Monte Carlo war-gaming, "
+        "nuclear deterrence, chokepoint analysis. Public JSON API — no auth, "
+        "CORS open. See /llms-full.txt and /agent.json for agent-friendly "
+        "documentation."
+    ),
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
+)
 
 # Public read-only sim API — wildcard CORS is intentional (no auth, no PII).
 app.add_middleware(

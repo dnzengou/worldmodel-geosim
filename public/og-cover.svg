@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="2030 GeoSim — Agent-Native Geopolitical Risk Engine">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#1a2744"/>
+      <stop offset="60%" stop-color="#0a0e1a"/>
+      <stop offset="100%" stop-color="#05070e"/>
+    </radialGradient>
+    <linearGradient id="arc" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4aa3ff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#4aa3ff" stop-opacity=".9"/>
+      <stop offset="100%" stop-color="#ff4a7a" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="globe" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#2b4a7a"/>
+      <stop offset="70%" stop-color="#17243d"/>
+      <stop offset="100%" stop-color="#0a0e1a"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <g transform="translate(600,330)">
+    <circle r="235" fill="url(#globe)" stroke="#4aa3ff" stroke-opacity=".35" stroke-width="1.5"/>
+    <g fill="none" stroke="#4aa3ff" stroke-opacity=".28" stroke-width="1">
+      <ellipse rx="235" ry="60"/>
+      <ellipse rx="235" ry="120"/>
+      <ellipse rx="235" ry="180"/>
+      <ellipse rx="60" ry="235"/>
+      <ellipse rx="120" ry="235"/>
+      <ellipse rx="180" ry="235"/>
+    </g>
+    <g fill="#ff4a7a">
+      <circle cx="-70" cy="-30" r="5"/>
+      <circle cx="40" cy="20" r="5"/>
+      <circle cx="120" cy="-80" r="5"/>
+      <circle cx="-150" cy="60" r="5"/>
+    </g>
+    <path d="M -150 60 Q 0 -140 120 -80" stroke="url(#arc)" stroke-width="2.5" fill="none"/>
+    <path d="M -70 -30 Q 50 -180 40 20" stroke="url(#arc)" stroke-width="2" fill="none" opacity=".7"/>
+  </g>
+  <g font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" fill="#e6e8ee">
+    <text x="60" y="110" font-size="56" font-weight="700">2030 GeoSim</text>
+    <text x="60" y="160" font-size="28" fill="#4aa3ff" font-weight="500">Agent-Native Geopolitical Risk Engine</text>
+    <text x="60" y="560" font-size="22" fill="#9aa7bd">Monte Carlo · CAS · Chokepoints · Open API</text>
+    <text x="60" y="595" font-size="18" fill="#6b7a95">worldmodel-geosim.vercel.app</text>
+  </g>
+</svg>

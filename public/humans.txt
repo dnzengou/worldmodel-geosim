@@ -1,0 +1,15 @@
+/* TEAM */
+Maintainer: dnzengou
+Contact: via GitHub issues — https://github.com/dnzengou/worldmodel-geosim/issues
+Location: Earth
+
+/* THANKS */
+Thanks to the Complex Adaptive Systems research community, open-source
+contributors to Three.js, Plotly, FastAPI, and every analyst who has
+stress-tested a scenario and filed an issue.
+
+/* SITE */
+Last update: 2026-11
+Standards: HTML5, CSS3, ES2022, WebGL, OpenAPI 3
+Components: Three.js, Plotly, FastAPI, Vercel
+Doctrine: Small diffs. No speculation. Agent-first interfaces.

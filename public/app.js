@@ -650,6 +650,22 @@ function navigate(page) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
   document.getElementById('content').innerHTML = PAGES[page].render();
   postRender(page);
+  // Shareable permalink: hash-route + per-page <title> so links copy/paste
+  // land back on the same view and search engines see page-specific titles.
+  const titles = {
+    dashboard: '2030 GeoSim — Dashboard | Agent-Native Geopolitical Risk',
+    editor:    'Scenario Editor — 2030 GeoSim',
+    risk:      'Risk Preview — 2030 GeoSim',
+    wargame:   'War-Game Mode — 2030 GeoSim',
+    mc:        'Monte Carlo — 2030 GeoSim',
+    globe:     '3D Globe — 2030 GeoSim',
+    compare:   'Scenario Comparison — 2030 GeoSim',
+  };
+  if (titles[page]) document.title = titles[page];
+  try {
+    const h = `#/${page}`;
+    if (location.hash !== h) history.replaceState(null, '', h);
+  } catch (_) { /* no-op */ }
 }
 
 function postRender(page) {
@@ -958,6 +974,14 @@ async function init() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
+
+  // Respect permalink: open directly on the page encoded in the URL hash.
+  const hashPage = (location.hash.match(/^#\/([a-z]+)/) || [])[1];
+  if (hashPage && PAGES[hashPage]) S.page = hashPage;
+  window.addEventListener('hashchange', () => {
+    const p = (location.hash.match(/^#\/([a-z]+)/) || [])[1];
+    if (p && PAGES[p] && p !== S.page) navigate(p);
+  });
 
   // Render initial page
   navigate(S.page);

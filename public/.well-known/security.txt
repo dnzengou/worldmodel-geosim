@@ -1,0 +1,8 @@
+# If you believe you've found a security issue in 2030 GeoSim, please open
+# a private advisory on GitHub or email the contact below.
+Contact: https://github.com/dnzengou/worldmodel-geosim/security/advisories/new
+Contact: mailto:security@worldmodel-geosim.vercel.app
+Expires: 2027-12-31T23:59:59Z
+Preferred-Languages: en
+Canonical: https://worldmodel-geosim.vercel.app/.well-known/security.txt
+Policy: https://worldmodel-geosim.vercel.app/about.html#security

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://agentmanifest.org/v1/schema.json",
+  "name": "2030 GeoSim",
+  "slug": "geosim",
+  "version": "2.4.0",
+  "summary": "Agent-native geopolitical risk simulation engine.",
+  "description": "Open-source Complex Adaptive Systems engine for geopolitical risk, Monte Carlo war-gaming, nuclear deterrence, and chokepoint analysis. Public JSON API, no auth, CORS-open.",
+  "homepage": "https://worldmodel-geosim.vercel.app/",
+  "documentation": "https://worldmodel-geosim.vercel.app/llms-full.txt",
+  "openapi": "https://worldmodel-geosim.vercel.app/api/openapi.json",
+  "repository": "https://github.com/dnzengou/worldmodel-geosim",
+  "license": "See repository LICENSE",
+  "auth": "none",
+  "cors": "*",
+  "pricing": "free",
+  "capabilities": [
+    {
+      "name": "list_scenarios",
+      "method": "GET",
+      "path": "/api/scenarios",
+      "description": "List all built-in geopolitical scenarios."
+    },
+    {
+      "name": "world_state",
+      "method": "GET",
+      "path": "/api/world-state",
+      "description": "Current baseline actors, tensions, chokepoint status."
+    },
+    {
+      "name": "simulate",
+      "method": "POST",
+      "path": "/api/simulate",
+      "description": "Run a single forward simulation of a named scenario.",
+      "request_example": { "scenario": "Taiwan Strait Blockade 2026", "horizon_days": 90 }
+    },
+    {
+      "name": "monte_carlo",
+      "method": "POST",
+      "path": "/api/monte-carlo",
+      "description": "Run N ensemble runs; returns distribution and composite risk.",
+      "request_example": { "scenario": "Hormuz Closure Crisis", "n": 1000, "horizon_days": 30 }
+    },
+    {
+      "name": "belief_fusion",
+      "method": "POST",
+      "path": "/api/belief",
+      "description": "Fuse multi-actor beliefs and evolve strategies."
+    },
+    {
+      "name": "parse_natural_language",
+      "method": "POST",
+      "path": "/api/nl",
+      "description": "Parse a natural-language command into a structured scenario call.",
+      "request_example": { "text": "simulate Hormuz closure for 30 days" }
+    }
+  ],
+  "content_usage": {
+    "indexing": "allowed",
+    "training": "allowed",
+    "rag": "allowed",
+    "attribution": "preferred"
+  },
+  "contact": {
+    "issues": "https://github.com/dnzengou/worldmodel-geosim/issues",
+    "security": "https://worldmodel-geosim.vercel.app/.well-known/security.txt"
+  }
+}

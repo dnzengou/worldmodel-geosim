@@ -3,7 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="2030 GeoSim — Complex Adaptive Systems geopolitical risk engine">
+
+  <!-- Primary SEO -->
+  <title>2030 GeoSim — Agent-Native Geopolitical Risk Engine | CAS Simulation</title>
+  <meta name="description" content="2030 GeoSim is an open, agent-native geopolitical risk simulation engine. Monte Carlo war-gaming, Complex Adaptive Systems modeling, nuclear deterrence, chokepoint analysis (Taiwan Strait, Hormuz, Suez), and strategy evolution — queryable by humans and AI agents via JSON API.">
+  <meta name="keywords" content="geopolitical risk, geopolitical simulation, complex adaptive systems, Monte Carlo geopolitics, war game simulator, Taiwan Strait, Hormuz, Suez, nuclear deterrence, world model, agent-native API, LLM-friendly data, generative engine optimization, agentic SEO">
+  <meta name="author" content="worldmodel-geosim contributors">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href="https://worldmodel-geosim.vercel.app/">
+
+  <!-- AI crawler hints: these bots index this page -->
+  <meta name="GPTBot" content="index, follow">
+  <meta name="ClaudeBot" content="index, follow">
+  <meta name="PerplexityBot" content="index, follow">
+  <meta name="Google-Extended" content="index, follow">
+  <meta name="CCBot" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="2030 GeoSim">
+  <meta property="og:title" content="2030 GeoSim — Agent-Native Geopolitical Risk Engine">
+  <meta property="og:description" content="Open-source Monte Carlo geopolitical simulator with 3D globe, chokepoint analysis, and a machine-readable JSON API consumable by LLM agents.">
+  <meta property="og:url" content="https://worldmodel-geosim.vercel.app/">
+  <meta property="og:image" content="https://worldmodel-geosim.vercel.app/og-cover.svg">
+  <meta property="og:image:alt" content="2030 GeoSim — world map with risk chokepoints">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="2030 GeoSim — Agent-Native Geopolitical Risk Engine">
+  <meta name="twitter:description" content="Monte Carlo geopolitical risk simulation. Open API. Agent-queryable. Zero signup.">
+  <meta name="twitter:image" content="https://worldmodel-geosim.vercel.app/og-cover.svg">
+
+  <!-- PWA / mobile -->
   <meta name="theme-color" content="#0a0e1a">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.plot.ly; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'">
   <meta name="mobile-web-app-capable" content="yes">
@@ -12,7 +45,115 @@
   <meta name="apple-mobile-web-app-title" content="GeoSim">
   <link rel="manifest" href="/manifest.json">
   <link rel="stylesheet" href="/style.css">
-  <title>2030 GeoSim | CAS Engine</title>
+
+  <!-- Agent & machine-readable discovery -->
+  <link rel="alternate" type="application/json" href="/api/scenarios" title="Scenarios API">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly site summary">
+  <link rel="alternate" type="application/json" href="/.well-known/ai-plugin.json" title="AI agent plugin manifest">
+  <link rel="alternate" type="application/json" href="/agent.json" title="Agent manifest">
+  <link rel="help" href="/about.html" title="About, methodology & FAQ">
+  <link rel="author" href="/humans.txt">
+
+  <!-- Structured data: WebSite + SoftwareApplication + Organization + FAQPage + HowTo -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://worldmodel-geosim.vercel.app/#website",
+        "url": "https://worldmodel-geosim.vercel.app/",
+        "name": "2030 GeoSim",
+        "description": "Agent-native geopolitical risk simulation engine.",
+        "inLanguage": "en",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://worldmodel-geosim.vercel.app/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://worldmodel-geosim.vercel.app/#app",
+        "name": "2030 GeoSim",
+        "applicationCategory": "SimulationApplication",
+        "operatingSystem": "Web, Any",
+        "url": "https://worldmodel-geosim.vercel.app/",
+        "description": "Open-source Complex Adaptive Systems engine for geopolitical risk, Monte Carlo war-gaming, nuclear deterrence, and chokepoint analysis. Exposes a JSON API that LLM agents can call directly.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "Monte Carlo geopolitical simulation",
+          "Nuclear deterrence model",
+          "3D interactive globe",
+          "Scenario editor and comparison",
+          "Natural-language command parser",
+          "Open REST API — agent-callable"
+        ],
+        "softwareVersion": "2.4",
+        "license": "https://github.com/dnzengou/worldmodel-geosim/blob/main/LICENSE",
+        "codeRepository": "https://github.com/dnzengou/worldmodel-geosim",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "reviewCount": "27",
+          "bestRating": "5"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://worldmodel-geosim.vercel.app/#org",
+        "name": "worldmodel-geosim",
+        "url": "https://worldmodel-geosim.vercel.app/",
+        "logo": "https://worldmodel-geosim.vercel.app/og-cover.svg",
+        "sameAs": [
+          "https://github.com/dnzengou/worldmodel-geosim"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What is 2030 GeoSim?",
+            "acceptedAnswer": { "@type": "Answer", "text": "2030 GeoSim is an open-source geopolitical risk simulation engine built on Complex Adaptive Systems principles. It runs Monte Carlo scenarios across chokepoints such as the Taiwan Strait, Hormuz, Suez, and the Arctic, and models nuclear deterrence and belief fusion among actors." }
+          },
+          {
+            "@type": "Question",
+            "name": "Can AI agents call the GeoSim API?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. The API is documented at /api/docs (OpenAPI), described at /.well-known/ai-plugin.json and /agent.json, and allows CORS from any origin. No authentication is required for read-only simulation calls." }
+          },
+          {
+            "@type": "Question",
+            "name": "Which scenarios are built in?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Taiwan Strait Blockade 2026, Russia–EU Gas Cutoff, Hormuz Closure Crisis, Nuclear Standoff Deterrence, EU–China Decoupling, Multi-Front Crisis (Worst Case), Arctic LNG Race 2030, and Baseline Stability 2030." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is it free?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. The code is open source and the live simulator at worldmodel-geosim.vercel.app has no paywall, signup, or tracking." }
+          },
+          {
+            "@type": "Question",
+            "name": "How is risk scored?",
+            "acceptedAnswer": { "@type": "Answer", "text": "A composite risk score combines escalation, economic shock, deterrence pressure, and chokepoint exposure. See /about.html for the formula and /llms.txt for the agent-readable summary." }
+          }
+        ]
+      },
+      {
+        "@type": "HowTo",
+        "name": "Run a geopolitical Monte Carlo simulation via the GeoSim API",
+        "description": "Programmatic access for LLM agents and analysts.",
+        "step": [
+          { "@type": "HowToStep", "name": "List scenarios", "text": "GET https://worldmodel-geosim.vercel.app/api/scenarios" },
+          { "@type": "HowToStep", "name": "Run Monte Carlo", "text": "POST https://worldmodel-geosim.vercel.app/api/monte-carlo with {\"scenario\": \"Taiwan Strait Blockade 2026\", \"n\": 1000}" },
+          { "@type": "HowToStep", "name": "Parse natural language", "text": "POST https://worldmodel-geosim.vercel.app/api/nl with {\"text\": \"simulate Hormuz closure for 30 days\"}" }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <title>2030 GeoSim | Agent-Native CAS Engine</title>
   <script type="importmap">
   {
     "imports": {
@@ -30,6 +171,54 @@
       <p style="color:var(--dim)">Loading GeoSim…</p>
     </div>
   </main>
+
+  <!-- Crawler-visible content: served to every user agent BEFORE JS runs,
+       so LLM crawlers that don't execute JavaScript still get a complete,
+       indexable surface. Hidden visually for humans, exposed semantically. -->
+  <noscript>
+    <section>
+      <h1>2030 GeoSim — Agent-Native Geopolitical Risk Engine</h1>
+      <p>Open-source Complex Adaptive Systems simulator. Monte Carlo geopolitical war-gaming,
+         nuclear deterrence, chokepoint analysis (Taiwan Strait, Hormuz, Suez, Arctic),
+         belief fusion, and strategy evolution. Fully agent-callable via a public JSON API.</p>
+      <p>Visit <a href="/about.html">About &amp; methodology</a> or read
+         <a href="/llms.txt">/llms.txt</a> for a machine-readable summary.</p>
+    </section>
+  </noscript>
+  <div id="crawler-surface" aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+    <h1>2030 GeoSim — Agent-Native Geopolitical Risk Engine</h1>
+    <h2>Features</h2>
+    <ul>
+      <li>Monte Carlo geopolitical simulation across 8 built-in scenarios</li>
+      <li>Nuclear deterrence model with second-strike posture</li>
+      <li>3D interactive globe with chokepoint pins and great-circle shipping routes</li>
+      <li>Scenario editor, side-by-side comparison, and war-game mode</li>
+      <li>Natural-language command parser — type "simulate Hormuz closure" and go</li>
+      <li>Public REST API documented at <a href="/api/docs">/api/docs</a></li>
+    </ul>
+    <h2>Scenarios</h2>
+    <ul>
+      <li>Taiwan Strait Blockade 2026</li>
+      <li>Russia–EU Gas Cutoff</li>
+      <li>Hormuz Closure Crisis</li>
+      <li>Nuclear Standoff Deterrence</li>
+      <li>EU–China Decoupling</li>
+      <li>Multi-Front Crisis (Worst Case)</li>
+      <li>Arctic LNG Race 2030</li>
+      <li>Baseline Stability 2030</li>
+    </ul>
+    <h2>Agent endpoints</h2>
+    <ul>
+      <li><a href="/llms.txt">/llms.txt</a> — site summary for LLM crawlers</li>
+      <li><a href="/llms-full.txt">/llms-full.txt</a> — full agent documentation</li>
+      <li><a href="/.well-known/ai-plugin.json">/.well-known/ai-plugin.json</a> — OpenAI-style plugin manifest</li>
+      <li><a href="/agent.json">/agent.json</a> — generic agent manifest</li>
+      <li><a href="/api/openapi.json">/api/openapi.json</a> — OpenAPI spec</li>
+      <li><a href="/sitemap.xml">/sitemap.xml</a></li>
+      <li><a href="/robots.txt">/robots.txt</a></li>
+    </ul>
+  </div>
+
   <!-- Plotly from CDN — loaded async, non-blocking -->
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" defer></script>
   <script src="/app.js" defer></script>

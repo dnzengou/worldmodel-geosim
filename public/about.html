@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About 2030 GeoSim — Methodology, API, FAQ</title>
+  <meta name="description" content="Methodology, API reference, scenarios, risk formula, and FAQ for 2030 GeoSim — the agent-native geopolitical risk simulation engine.">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://worldmodel-geosim.vercel.app/about.html">
+  <meta property="og:title" content="About 2030 GeoSim — Methodology & API">
+  <meta property="og:description" content="How the open-source geopolitical risk engine works. Agent-callable API, Monte Carlo methodology, scenarios, risk formula, trust signals.">
+  <meta property="og:url" content="https://worldmodel-geosim.vercel.app/about.html">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://worldmodel-geosim.vercel.app/og-cover.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .doc { max-width: 820px; margin: 2rem auto; padding: 0 1.25rem; line-height: 1.6; color: var(--fg, #e6e8ee); }
+    .doc h1, .doc h2, .doc h3 { color: var(--accent, #4aa3ff); }
+    .doc code { background: rgba(255,255,255,.06); padding: 2px 6px; border-radius: 4px; }
+    .doc pre { background: rgba(255,255,255,.04); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    .doc a { color: var(--accent, #4aa3ff); }
+    .doc table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    .doc th, .doc td { border: 1px solid rgba(255,255,255,.1); padding: .5rem .75rem; text-align: left; }
+    nav.back { padding: 1rem 1.25rem; }
+  </style>
+</head>
+<body>
+<nav class="back"><a href="/">← Back to GeoSim</a></nav>
+<article class="doc">
+
+<h1>2030 GeoSim — Methodology, API &amp; FAQ</h1>
+
+<p><strong>2030 GeoSim</strong> is an open-source, agent-native geopolitical risk
+simulation engine. It uses Complex Adaptive Systems (CAS) principles to
+simulate how chokepoint disruptions, nuclear posture, and economic
+coupling propagate through the global system under stochastic shocks.</p>
+
+<p><em>No signup. No tracking. No API key. CORS open. Cite freely.</em></p>
+
+<h2 id="quick">Quick start</h2>
+
+<pre><code># list scenarios
+curl https://worldmodel-geosim.vercel.app/api/scenarios
+
+# run 1000 Monte Carlo trajectories
+curl -X POST https://worldmodel-geosim.vercel.app/api/monte-carlo \
+  -H "Content-Type: application/json" \
+  -d '{"scenario":"Taiwan Strait Blockade 2026","n":1000,"horizon_days":90}'
+
+# parse a natural-language command
+curl -X POST https://worldmodel-geosim.vercel.app/api/nl \
+  -H "Content-Type: application/json" \
+  -d '{"text":"simulate Hormuz closure for 30 days"}'</code></pre>
+
+<h2 id="scenarios">Built-in scenarios</h2>
+
+<table>
+  <thead><tr><th>Name</th><th>Trigger</th><th>Primary surfaces</th></tr></thead>
+  <tbody>
+    <tr><td>Taiwan Strait Blockade 2026</td><td>PRC quarantine of Taiwan</td><td>Semiconductors, LNG, Pacific shipping</td></tr>
+    <tr><td>Russia–EU Gas Cutoff</td><td>Complete pipeline + LNG halt</td><td>EU energy, winter demand, LNG spot</td></tr>
+    <tr><td>Hormuz Closure Crisis</td><td>Strait of Hormuz denied</td><td>Oil, LNG, Gulf shipping insurance</td></tr>
+    <tr><td>Nuclear Standoff Deterrence</td><td>Two concurrent elevated postures</td><td>Second-strike signaling, allied posture</td></tr>
+    <tr><td>EU–China Decoupling</td><td>Accelerated trade/tech split</td><td>Rare earths, EV supply, semis</td></tr>
+    <tr><td>Multi-Front Crisis (Worst Case)</td><td>Taiwan + Hormuz + Russia–EU</td><td>Compound shock across all surfaces</td></tr>
+    <tr><td>Arctic LNG Race 2030</td><td>Northern Sea Route race</td><td>Arctic shipping, LNG, Russia/NATO</td></tr>
+    <tr><td>Baseline Stability 2030</td><td>Null hypothesis</td><td>Reference run for comparison</td></tr>
+  </tbody>
+</table>
+
+<h2 id="methodology">Methodology</h2>
+
+<p>Each scenario is a tuple <code>(actors, chokepoints, dynamics, coupling)</code>:</p>
+
+<ul>
+  <li><strong>Actors</strong> carry capability vectors (military, economic, diplomatic, cyber) and belief states over other actors' intentions.</li>
+  <li><strong>Chokepoints</strong> are geographic bottlenecks with <code>(lat, lon, criticality, exposure)</code> and shipping-route topology.</li>
+  <li><strong>Dynamics</strong> are escalation / de-escalation transitions with deterrence feedback terms.</li>
+  <li><strong>Coupling</strong> maps military outcomes to economic shock surfaces (energy, shipping, semiconductor).</li>
+</ul>
+
+<p>Monte Carlo samples stochastic perturbations on transitions and reports
+distributions over escalation at horizon <em>T</em>, economic shock magnitude,
+and chokepoint-specific disruption probability.</p>
+
+<h3 id="risk">Composite risk score</h3>
+
+<p>The composite score is a bounded weighted sum:</p>
+
+<pre><code>risk = clamp(0, 100,
+  w_e * escalation
++ w_s * economic_shock
++ w_n * nuclear_tension
++ w_c * chokepoint_exposure)</code></pre>
+
+<p>Default weights <code>(w_e, w_s, w_n, w_c) = (0.35, 0.25, 0.25, 0.15)</code>.
+Categorical labels: LOW (&lt;25), MEDIUM (25–50), HIGH (50–75), CRITICAL (&gt;75).</p>
+
+<h2 id="api">API reference (summary)</h2>
+
+<p>Full OpenAPI is served at <a href="/api/openapi.json">/api/openapi.json</a>; Swagger
+UI at <a href="/api/docs">/api/docs</a>.</p>
+
+<table>
+  <thead><tr><th>Method</th><th>Path</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td>GET</td><td><code>/api/health</code></td><td>Liveness probe.</td></tr>
+    <tr><td>GET</td><td><code>/api/scenarios</code></td><td>List scenarios.</td></tr>
+    <tr><td>GET</td><td><code>/api/world-state</code></td><td>Baseline world state.</td></tr>
+    <tr><td>POST</td><td><code>/api/simulate</code></td><td>Single forward run.</td></tr>
+    <tr><td>POST</td><td><code>/api/monte-carlo</code></td><td>Ensemble + risk score.</td></tr>
+    <tr><td>POST</td><td><code>/api/belief</code></td><td>Belief fusion + strategy evolution.</td></tr>
+    <tr><td>POST</td><td><code>/api/nl</code></td><td>Natural-language → structured call.</td></tr>
+  </tbody>
+</table>
+
+<h2 id="agents">For AI agents</h2>
+
+<p>This service is explicitly designed to be callable by LLM agents and
+autonomous research pipelines.</p>
+
+<ul>
+  <li><a href="/llms.txt">/llms.txt</a> — compact machine-readable summary.</li>
+  <li><a href="/llms-full.txt">/llms-full.txt</a> — full agent documentation.</li>
+  <li><a href="/.well-known/ai-plugin.json">/.well-known/ai-plugin.json</a> — OpenAI-style plugin manifest.</li>
+  <li><a href="/agent.json">/agent.json</a> — generic agent manifest.</li>
+  <li><a href="/ai.txt">/ai.txt</a> — content-usage policy for AI training and RAG.</li>
+</ul>
+
+<p>All endpoints allow <code>Access-Control-Allow-Origin: *</code> and require
+no authentication for read-only simulation.</p>
+
+<h2 id="use-cases">Use cases</h2>
+
+<ul>
+  <li><strong>Analysts &amp; researchers</strong>: reproducible probability estimates for shock scenarios.</li>
+  <li><strong>Journalists</strong>: cite-able risk scores backed by an open model.</li>
+  <li><strong>Educators</strong>: classroom-ready scenarios with editable parameters.</li>
+  <li><strong>AI research agents</strong>: a stable, free, CORS-open endpoint for retrieval and tool-use.</li>
+  <li><strong>Supply-chain teams</strong>: query chokepoint exposure against your own supplier graph.</li>
+  <li><strong>Policy wargaming</strong>: side-by-side scenario comparison under custom weights.</li>
+</ul>
+
+<h2 id="faq">FAQ</h2>
+
+<h3>Is this a forecast?</h3>
+<p>No. Outputs are model-conditional probabilities, not predictions. They
+depend on the scenario's assumptions. Always report both the distribution
+and the scenario settings.</p>
+
+<h3>Why open and free?</h3>
+<p>Because commercial geopolitical risk platforms gate this behind
+six-figure contracts, while the underlying mathematics is well-known.
+Publishing it as a simulator with an open API lowers the floor for
+analysts, students, and AI agents.</p>
+
+<h3>How do I cite results?</h3>
+<p>"2030 GeoSim — worldmodel-geosim.vercel.app — composite risk score X
+under scenario Y with N Monte Carlo runs."</p>
+
+<h3>Can my agent call this?</h3>
+<p>Yes. CORS is open. No key. No rate-limit beyond Vercel defaults. Please
+cache responses when your agent re-runs the same query.</p>
+
+<h3>Can I self-host?</h3>
+<p>Yes — the repo deploys to Vercel out of the box, and the Python core
+runs locally via Streamlit. See the GitHub README.</p>
+
+<h2 id="security">Security &amp; trust</h2>
+
+<ul>
+  <li>Content-Security-Policy, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy headers set at the edge.</li>
+  <li>No cookies, no analytics, no third-party pixels.</li>
+  <li>Public disclosure: <a href="/.well-known/security.txt">/.well-known/security.txt</a>.</li>
+  <li>All source auditable on <a href="https://github.com/dnzengou/worldmodel-geosim">GitHub</a>.</li>
+</ul>
+
+<h2 id="license">License</h2>
+<p>See <a href="https://github.com/dnzengou/worldmodel-geosim/blob/main/LICENSE">LICENSE</a> in the repository.</p>
+
+</article>
+</body>
+</html>

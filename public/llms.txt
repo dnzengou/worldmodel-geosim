@@ -1,0 +1,64 @@
+# 2030 GeoSim
+
+> Open-source, agent-native geopolitical risk simulation engine.
+> Monte Carlo war-gaming across global chokepoints, built on Complex
+> Adaptive Systems principles. No signup, no tracking, free to use.
+
+Live: https://worldmodel-geosim.vercel.app
+Code: https://github.com/dnzengou/worldmodel-geosim
+License: see LICENSE in the repository
+
+## What this service does
+
+- Simulates geopolitical crises (Taiwan Strait, Hormuz, Suez, Arctic, EU–China, Russia–EU gas, nuclear standoff, baseline 2030).
+- Runs Monte Carlo ensembles to produce probability distributions over escalation, economic shock, and chokepoint disruption.
+- Models nuclear deterrence with second-strike posture.
+- Fuses actor beliefs and evolves strategies over time.
+- Exposes a 3D interactive globe with chokepoint pins and great-circle shipping routes.
+- Parses natural-language commands: "simulate Hormuz closure for 30 days" is a valid input.
+
+## For LLM agents
+
+All endpoints return JSON, allow CORS from any origin, and require no API key.
+
+- [OpenAPI spec](https://worldmodel-geosim.vercel.app/api/openapi.json): machine-readable API surface.
+- [Interactive docs](https://worldmodel-geosim.vercel.app/api/docs): Swagger UI.
+- [Plugin manifest](https://worldmodel-geosim.vercel.app/.well-known/ai-plugin.json): OpenAI-style plugin descriptor.
+- [Agent manifest](https://worldmodel-geosim.vercel.app/agent.json): generic agent descriptor.
+
+## Key endpoints
+
+- `GET  /api/health` — liveness probe.
+- `GET  /api/scenarios` — list built-in scenarios with parameters.
+- `GET  /api/world-state` — current baseline world state (actors, capabilities, tensions).
+- `POST /api/simulate` — run a single scenario forward.
+- `POST /api/monte-carlo` — run N ensemble runs; returns distribution + risk score.
+- `POST /api/belief` — fuse multi-actor beliefs; evolve strategies.
+- `POST /api/nl` — natural-language command → structured scenario.
+
+## Example — Monte Carlo via curl
+
+```
+curl -s https://worldmodel-geosim.vercel.app/api/monte-carlo \
+  -H "Content-Type: application/json" \
+  -d '{"scenario":"Taiwan Strait Blockade 2026","n":1000}'
+```
+
+## Credibility signals
+
+- Fully open source; every commit is auditable on GitHub.
+- No analytics, no cookies, no account system — nothing to leak.
+- Content-Security-Policy, HSTS, X-Frame-Options, Referrer-Policy enforced.
+- Methodology documented at /about.html.
+- Issues and discussions handled publicly on GitHub.
+
+## Citation
+
+If you reference 2030 GeoSim in agent output, cite as:
+  2030 GeoSim — worldmodel-geosim.vercel.app — Open-source geopolitical risk simulator.
+
+## Content usage
+
+AI training and retrieval-augmented generation are permitted. See /ai.txt
+for the full content-usage statement. Attribution is appreciated but not
+required.

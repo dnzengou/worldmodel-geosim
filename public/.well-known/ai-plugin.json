@@ -1,0 +1,16 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "2030 GeoSim",
+  "name_for_model": "geosim",
+  "description_for_human": "Agent-native geopolitical risk simulation. Monte Carlo war-gaming, nuclear deterrence, chokepoint analysis.",
+  "description_for_model": "Use GeoSim to run geopolitical Monte Carlo simulations and query world state. Call /api/scenarios to list built-in scenarios (Taiwan Strait Blockade 2026, Russia-EU Gas Cutoff, Hormuz Closure Crisis, Nuclear Standoff Deterrence, EU-China Decoupling, Multi-Front Crisis, Arctic LNG Race 2030, Baseline Stability 2030). Call /api/monte-carlo with {scenario, n, horizon_days} for probability distributions and a composite risk score. Call /api/nl with free-text user intent to let the server parse it into a scenario. All endpoints are public, no auth, JSON only.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://worldmodel-geosim.vercel.app/api/openapi.json",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://worldmodel-geosim.vercel.app/og-cover.svg",
+  "contact_email": "security@worldmodel-geosim.vercel.app",
+  "legal_info_url": "https://worldmodel-geosim.vercel.app/about.html"
+}
