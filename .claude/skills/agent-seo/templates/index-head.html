@@ -1,0 +1,63 @@
+<!-- agent-seo: paste inside <head>, after <meta charset> and <meta viewport>. -->
+
+<title>{{SITE_NAME}} — {{SITE_TAGLINE}}</title>
+<meta name="description" content="{{SITE_DESCRIPTION}}">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<link rel="canonical" href="{{CANONICAL_URL}}/">
+
+<meta name="GPTBot" content="index, follow">
+<meta name="ClaudeBot" content="index, follow">
+<meta name="PerplexityBot" content="index, follow">
+<meta name="Google-Extended" content="index, follow">
+<meta name="CCBot" content="index, follow">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{SITE_NAME}}">
+<meta property="og:title" content="{{SITE_NAME}} — {{SITE_TAGLINE}}">
+<meta property="og:description" content="{{SITE_DESCRIPTION}}">
+<meta property="og:url" content="{{CANONICAL_URL}}/">
+<meta property="og:image" content="{{OG_IMAGE_URL}}">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{SITE_NAME}} — {{SITE_TAGLINE}}">
+<meta name="twitter:description" content="{{SITE_DESCRIPTION}}">
+<meta name="twitter:image" content="{{OG_IMAGE_URL}}">
+
+<link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-friendly summary">
+<link rel="alternate" type="application/json" href="/agent.json" title="Agent manifest">
+<link rel="alternate" type="application/json" href="/.well-known/ai-plugin.json" title="AI plugin manifest">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{CANONICAL_URL}}/#website",
+      "url": "{{CANONICAL_URL}}/",
+      "name": "{{SITE_NAME}}",
+      "description": "{{SITE_DESCRIPTION}}",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "{{CANONICAL_URL}}/#app",
+      "name": "{{SITE_NAME}}",
+      "applicationCategory": "{{CATEGORY}}",
+      "operatingSystem": "Web, Any",
+      "url": "{{CANONICAL_URL}}/",
+      "description": "{{SITE_DESCRIPTION}}",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "softwareVersion": "{{VERSION}}",
+      "license": "{{LICENSE_URL}}",
+      "codeRepository": "{{REPO_URL}}"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {{FAQ_JSON_LD}}
+      ]
+    }
+  ]
+}
+</script>

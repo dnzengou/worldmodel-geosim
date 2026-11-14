@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agentmanifest.org/v1/schema.json",
+  "name": "{{SITE_NAME}}",
+  "slug": "{{SITE_SLUG}}",
+  "version": "{{VERSION}}",
+  "summary": "{{SITE_TAGLINE}}",
+  "description": "{{SITE_DESCRIPTION}}",
+  "homepage": "{{CANONICAL_URL}}/",
+  "documentation": "{{CANONICAL_URL}}/llms-full.txt",
+  "openapi": "{{CANONICAL_URL}}/api/openapi.json",
+  "repository": "{{REPO_URL}}",
+  "license": "{{LICENSE_URL}}",
+  "auth": "none",
+  "cors": "*",
+  "pricing": "free",
+  "capabilities": [
+    { "name": "example", "method": "GET", "path": "/api/example", "description": "Describe capability." }
+  ],
+  "content_usage": {
+    "indexing": "allowed",
+    "training": "allowed",
+    "rag": "allowed",
+    "attribution": "preferred"
+  },
+  "contact": {
+    "issues": "{{REPO_URL}}/issues",
+    "security": "{{CANONICAL_URL}}/.well-known/security.txt"
+  }
+}

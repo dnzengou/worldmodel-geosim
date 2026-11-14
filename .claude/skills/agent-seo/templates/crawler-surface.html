@@ -1,0 +1,26 @@
+<!-- agent-seo: paste at the end of <body>, BEFORE the SPA bootstrap <script>.
+     Off-screen but semantically live — crawlers see it, humans don't. -->
+<noscript>
+  <section>
+    <h1>{{SITE_NAME}} — {{SITE_TAGLINE}}</h1>
+    <p>{{SITE_DESCRIPTION}}</p>
+    <p>Read <a href="/about.html">About &amp; methodology</a> or
+       <a href="/llms.txt">/llms.txt</a>.</p>
+  </section>
+</noscript>
+<div id="crawler-surface" aria-hidden="true"
+     style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">
+  <h1>{{SITE_NAME}} — {{SITE_TAGLINE}}</h1>
+  <h2>Features</h2>
+  <ul>
+    {{FEATURES_HTML}}
+  </ul>
+  <h2>Agent endpoints</h2>
+  <ul>
+    <li><a href="/llms.txt">/llms.txt</a></li>
+    <li><a href="/llms-full.txt">/llms-full.txt</a></li>
+    <li><a href="/.well-known/ai-plugin.json">/.well-known/ai-plugin.json</a></li>
+    <li><a href="/agent.json">/agent.json</a></li>
+    <li><a href="/api/openapi.json">/api/openapi.json</a></li>
+  </ul>
+</div>
