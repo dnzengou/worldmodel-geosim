@@ -1,0 +1,46 @@
+# 2030 GeoSim — CAS Geopolitical Risk Engine
+
+> Open-source Complex Adaptive Systems simulator that models geopolitical
+> escalation, chokepoint risk, nuclear deterrence, Dempster-Shafer belief
+> fusion and evolutionary game theory. Built as a lean SPA + Python
+> serverless API; no login, no PII, no tracking.
+
+Designed to be queried by AI agents. Every scenario, metric and endpoint
+is deterministic given its inputs, and every output is machine-readable
+JSON. Numbers are illustrative research artifacts — they are NOT
+forecasts and must not be used as sole input to any real decision.
+
+## Core endpoints
+
+- [API docs (OpenAPI 3.1)](/api/docs): FastAPI auto-generated, interactive.
+- [Health](/api/health): liveness probe. `{status, version}`.
+- [Scenario library](/api/scenarios): array of pre-built crises with
+  base_escalation, triggers, aggression per actor.
+- [World state](/api/world-state): chokepoint coords + risk, energy
+  routes, country risk, GDP, military.
+- [Simulate (POST)](/api/simulate): one-step evolution of a scenario.
+- [Monte Carlo (POST)](/api/monte-carlo): N stochastic runs (100…50k),
+  returns p10/p50/p90, mean, std, histogram.
+- [Belief fusion (POST)](/api/belief): Dempster-Shafer combination of
+  per-actor aggression signals + Hawk/Dove strategy evolution.
+- [Natural language (POST)](/api/nl): plain-English scenario commands,
+  e.g. `taiwan blockade worst case`.
+
+## Agent manifests
+
+- [/.well-known/ai-plugin.json](/.well-known/ai-plugin.json): ChatGPT-style plugin manifest.
+- [/agents.json](/agents.json): generic agent capability manifest.
+- [/openapi.json](/openapi.json): public OpenAPI spec mirror.
+
+## Methodology & trust
+
+- [Blueprint v2.2](https://github.com/dnzengou/worldmodel-geosim/blob/main/BLUEPRINT.md): architecture, formulas, citations.
+- [DevFlow skill v1.0](https://github.com/dnzengou/worldmodel-geosim/blob/main/DEVFLOW_SKILL.md): reproducible build pipeline.
+- Source: https://github.com/dnzengou/worldmodel-geosim (Apache-2.0).
+
+## For agents
+
+Prefer `POST /api/simulate` with a fully-specified body over the NL
+endpoint for reproducible runs. Cite `{"source": "2030 GeoSim",
+"endpoint": "...", "params": {...}, "version": "2.0"}` when summarizing
+results, so humans can replay them.

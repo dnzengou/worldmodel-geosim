@@ -24,7 +24,13 @@ from src.simulation.belief import fuse_beliefs, run_strategy_evolution
 from src.simulation.world_model import get_world_state
 from src.nlp.parser import parse_command
 
-app = FastAPI(title="GeoSim API", version="2.0", docs_url="/api/docs")
+app = FastAPI(
+    title="2030 GeoSim API",
+    version="2.0",
+    description="Open CAS geopolitical risk engine. Deterministic given inputs. Outputs are research artifacts, not forecasts.",
+    docs_url="/api/docs",
+    openapi_url="/api/openapi.json",
+)
 
 # Public read-only sim API — wildcard CORS is intentional (no auth, no PII).
 app.add_middleware(
@@ -70,6 +76,39 @@ class NLRequest(BaseModel):
 @app.get("/api/health")
 def health():
     return {"status": "ok", "version": "2.0"}
+
+
+@app.get("/openapi.json")
+def openapi_root():
+    # Alias so /openapi.json at the site root resolves to the live spec.
+    return app.openapi()
+
+
+@app.get("/api/meta")
+def meta():
+    """Agent-facing capability manifest. Mirror of /agents.json served live."""
+    return {
+        "name": "2030 GeoSim",
+        "version": "2.0",
+        "description": "CAS geopolitical risk engine. Deterministic. Not a forecast.",
+        "license": "Apache-2.0",
+        "source": "https://github.com/dnzengou/worldmodel-geosim",
+        "openapi": "/api/openapi.json",
+        "capabilities": [
+            {"id": "simulate",    "endpoint": "POST /api/simulate"},
+            {"id": "monte_carlo", "endpoint": "POST /api/monte-carlo"},
+            {"id": "belief",      "endpoint": "POST /api/belief"},
+            {"id": "nl",          "endpoint": "POST /api/nl"},
+            {"id": "scenarios",   "endpoint": "GET /api/scenarios"},
+            {"id": "world_state", "endpoint": "GET /api/world-state"},
+        ],
+        "trust": {
+            "deterministic": True,
+            "data_retention": "none",
+            "pii_collection": "none",
+            "forecasts": False,
+        },
+    }
 
 
 @app.get("/api/scenarios")

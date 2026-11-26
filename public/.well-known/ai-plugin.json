@@ -1,0 +1,16 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "2030 GeoSim",
+  "name_for_model": "geosim",
+  "description_for_human": "Model geopolitical escalation, chokepoint risk, nuclear deterrence and Monte Carlo risk — free, open-source, no login.",
+  "description_for_model": "Deterministic Complex Adaptive Systems engine for geopolitical risk. Call /api/simulate with {base_escalation, triggers, nuclear_deterrence, aggression} to evolve one step, /api/monte-carlo for N stochastic runs with p10/p50/p90, /api/belief for Dempster-Shafer fusion + Hawk/Dove evolution, /api/scenarios for the pre-built crisis library. Values are research illustrations, not forecasts.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://worldmodel-geosim.vercel.app/openapi.json",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://worldmodel-geosim.vercel.app/icon-512.png",
+  "contact_email": "noreply@desiredsolutions.me",
+  "legal_info_url": "https://github.com/dnzengou/worldmodel-geosim/blob/main/LICENSE"
+}

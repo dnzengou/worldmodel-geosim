@@ -1,4 +1,4 @@
-streamlit==1.57.0
+# Local dev / testing only. Production deps live in api/requirements.txt (Vercel).
+fastapi==0.115.0
 numpy==2.4.4
-pandas==3.0.2
-plotly==6.7.0
+uvicorn==0.32.0

@@ -639,7 +639,7 @@ const PAGES = {
   compare:   { icon: '🆚', label: 'Compare', render: pageCompare },
 };
 
-function navigate(page) {
+function navigate(page, {updateHash = true} = {}) {
   if (!PAGES[page]) return;
   // Dispose the 3D globe (WebGL context + RAF loop + textures) when leaving that page.
   if (S.page === 'globe' && page !== 'globe' && _globeDispose) {
@@ -650,6 +650,8 @@ function navigate(page) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.page === page));
   document.getElementById('content').innerHTML = PAGES[page].render();
   postRender(page);
+  if (updateHash) writeHash();
+  guideTick();
 }
 
 function postRender(page) {
@@ -926,44 +928,198 @@ function _obDeleteChar() {
   }
 }
 
+// ── Permalinks ─────────────────────────────────────────────────────────────────
+// URL hash = #/<page>?s=<scenarioId>&e=<esc>&t=<tr1,tr2>&d=1
+// Share any configured run; agent-friendly deep links.
+function writeHash() {
+  if (S._embed) return;
+  const p = [`#/${S.page}`];
+  const q = new URLSearchParams();
+  if (S.loadedScenarioId) q.set('s', S.loadedScenarioId);
+  if (S.scenario.base_escalation !== 0.3) q.set('e', S.scenario.base_escalation.toFixed(2));
+  const trigs = Object.entries(S.scenario.triggers).filter(([,v])=>v).map(([k])=>k);
+  if (trigs.length) q.set('t', trigs.join(','));
+  if (S.scenario.nuclear_deterrence) q.set('d', '1');
+  const qs = q.toString();
+  history.replaceState(null, '', qs ? `${p}?${qs}` : p);
+}
+
+function readHash() {
+  const raw = location.hash.slice(1); // "/page?..."
+  if (!raw) return null;
+  const [path, qs] = raw.split('?');
+  const page = path.replace(/^\/+/, '') || 'dashboard';
+  const q = new URLSearchParams(qs || '');
+  return {
+    page: PAGES[page] ? page : 'dashboard',
+    s: q.get('s'),
+    e: q.get('e') != null ? +q.get('e') : null,
+    t: (q.get('t') || '').split(',').filter(Boolean),
+    d: q.get('d') === '1',
+  };
+}
+
+function applyHash(h) {
+  if (!h) return;
+  if (h.s && S.scenarios.length) {
+    const sc = S.scenarios.find(x => x.id === h.s);
+    if (sc) {
+      S.scenario = {
+        base_escalation: sc.base_escalation,
+        triggers: { ...sc.triggers },
+        theories: { ...sc.theories },
+        nuclear_deterrence: sc.nuclear_deterrence,
+        aggression: { ...sc.aggression },
+      };
+      S.loadedScenarioId = sc.id;
+    }
+  }
+  if (h.e != null) S.scenario.base_escalation = h.e;
+  if (h.t.length) { S.scenario.triggers = {}; h.t.forEach(k => S.scenario.triggers[k] = true); }
+  if (h.d) S.scenario.nuclear_deterrence = true;
+}
+
+function sharePermalink() {
+  writeHash();
+  const url = location.href;
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(url).then(() => flashToast('Permalink copied'));
+  } else {
+    flashToast(url);
+  }
+}
+
+function flashToast(msg) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.classList.add('toast-in'), 20);
+  setTimeout(() => { el.classList.remove('toast-in'); setTimeout(() => el.remove(), 250); }, 2200);
+}
+
+// ── AI guide / steward ─────────────────────────────────────────────────────────
+// Contextual, dismissible, zero-dep. Reads S and current page, offers next step.
+const GUIDE = {
+  KEY: 'geosim_guide_dismissed',
+  TIPS: {
+    dashboard:  { icon: '🎯', title: 'Start here',        body: 'Pick a scenario card below, or type a plain-English command in the sidebar — e.g. <em>"taiwan blockade worst case"</em>.' },
+    editor:     { icon: '🎚️', title: 'Tune, then simulate', body: 'Drag the escalation slider and toggle triggers, then hit <strong>Simulate Step</strong>. The gauge updates live.' },
+    risk:       { icon: '🔮', title: 'Fuse the signals',   body: 'Move the US · EU · RU sliders to fuse aggression signals via Dempster-Shafer. Hawk/Dove evolves on the right.' },
+    wargame:    { icon: '⚔️', title: 'Run your own war game', body: 'All four actors + two modifiers. Flip <strong>Nuclear deterrence</strong> to see the cubic dampener kick in.' },
+    mc:         { icon: '🎲', title: '10k runs in 200 ms',  body: 'Pick a run count and launch. P10 / P50 / P90 land on the histogram — great for board-ready screenshots.' },
+    globe:      { icon: '🌍', title: 'Live chokepoint risk', body: 'Drag to rotate. Pins = chokepoints · arcs = energy routes. Hover a pin for daily ship throughput.' },
+    compare:    { icon: '🆚', title: 'Diff two crises',     body: 'Select two scenarios above. Every risk metric is diffed (Δ) and color-coded green/red.' },
+  },
+  dismissed: () => localStorage.getItem(GUIDE.KEY) === '1',
+  _open: false,
+};
+
+function guideHtml() {
+  const tip = GUIDE.TIPS[S.page] || GUIDE.TIPS.dashboard;
+  const shareBtn = (S.simResult || S.loadedScenarioId)
+    ? `<button class="guide-action" onclick="sharePermalink()">↗ Share this setup</button>` : '';
+  return `<div class="guide-head">
+      <span class="guide-ico">${tip.icon}</span>
+      <strong>${tip.title}</strong>
+      <button class="guide-x" onclick="guideDismiss()" title="Dismiss">✕</button>
+    </div>
+    <p class="guide-body">${tip.body}</p>
+    <div class="guide-actions">
+      ${shareBtn}
+      <a class="guide-link" href="/api/docs" target="_blank" rel="noopener">API docs ↗</a>
+    </div>`;
+}
+
+function guideTick() {
+  if (S._embed) return;
+  if (GUIDE.dismissed()) return;
+  let el = document.getElementById('guide');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'guide';
+    el.className = 'guide';
+    document.body.appendChild(el);
+  }
+  el.innerHTML = guideHtml();
+}
+
+function guideDismiss() {
+  localStorage.setItem(GUIDE.KEY, '1');
+  document.getElementById('guide')?.remove();
+}
+
 // ── Init ───────────────────────────────────────────────────────────────────────
 async function init() {
-  // Build sidebar
-  const sidebar = document.getElementById('sidebar');
-  sidebar.innerHTML = `
-    <div class="logo">
-      <div class="logo-icon">🌐</div>
-      <div class="logo-title">2030 GeoSim</div>
-      <div class="logo-sub">CAS Engine v2.0</div>
-    </div>
-    <div class="nl-label">⌨ Natural Language Command</div>
-    <input class="nl-input" id="nl-input" placeholder="e.g. taiwan blockade worst case"
-      onkeydown="if(event.key==='Enter')handleNL(this.value)">
-    <div class="nl-feedback" id="nl-feedback"></div>
-    <div class="nav-section">Navigation</div>
-    ${Object.entries(PAGES).map(([k,p])=>`<button class="nav-btn${k===S.page?' active':''}" data-page="${k}" onclick="navigate('${k}')">${p.icon} ${p.label}</button>`).join('')}
-    <div class="scenario-summary" id="sidebar-summary">No simulation yet</div>`;
+  // Embed mode: ?embed=1 — chromeless, no sidebar, no onboarding. For partners/iframes.
+  const params = new URLSearchParams(location.search);
+  S._embed = params.get('embed') === '1';
+  if (S._embed) {
+    document.body.classList.add('embed');
+    const forcePage = params.get('page');
+    if (forcePage && PAGES[forcePage]) S.page = forcePage;
+  }
+
+  // Build sidebar (skipped in embed mode)
+  if (!S._embed) {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.innerHTML = `
+      <div class="logo">
+        <div class="logo-icon">🌐</div>
+        <div class="logo-title">2030 GeoSim</div>
+        <div class="logo-sub">CAS Engine v2.0</div>
+      </div>
+      <div class="nl-label">⌨ Natural Language Command</div>
+      <input class="nl-input" id="nl-input" placeholder="e.g. taiwan blockade worst case"
+        aria-label="Natural language command"
+        onkeydown="if(event.key==='Enter')handleNL(this.value)">
+      <div class="nl-feedback" id="nl-feedback"></div>
+      <div class="nav-section">Navigation</div>
+      ${Object.entries(PAGES).map(([k,p])=>`<button class="nav-btn${k===S.page?' active':''}" data-page="${k}" onclick="navigate('${k}')">${p.icon} ${p.label}</button>`).join('')}
+      <div class="sidebar-foot">
+        <button class="nav-btn nav-share" onclick="sharePermalink()" title="Share permalink of current setup">↗ Share setup</button>
+        <a class="nav-btn nav-share" href="/api/docs" target="_blank" rel="noopener">⚙ API docs</a>
+        <a class="nav-btn nav-share" href="https://github.com/dnzengou/worldmodel-geosim" target="_blank" rel="noopener">★ GitHub</a>
+      </div>
+      <div class="scenario-summary" id="sidebar-summary">No simulation yet</div>`;
+  }
+
+  // Parse initial hash (deep-link support)
+  const h0 = readHash();
 
   // Load scenarios in background
-  API.get('/api/scenarios').then(sc => {
+  try {
+    const sc = await API.get('/api/scenarios');
     S.scenarios = sc;
+    if (h0) applyHash(h0);
     if (S.page === 'dashboard') {
       const grid = document.getElementById('sc-grid');
       if (grid) grid.innerHTML = sc.map(scCard).join('');
       drawRiskMatrix('dash-matrix', sc);
     }
-  }).catch(() => {});
+  } catch(e) { /* non-fatal */ }
 
   // Register PWA service worker
-  if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator && !S._embed) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 
   // Render initial page
-  navigate(S.page);
+  const startPage = (h0 && h0.page) ? h0.page : S.page;
+  navigate(startPage, {updateHash: false});
+  if (h0 && (h0.s || h0.e != null || h0.t.length)) {
+    // Auto-run for shared links so viewers see the result immediately.
+    runSimulate().catch(() => {});
+  }
 
-  // First-run onboarding — shown after page renders so app is visible behind overlay
-  requestAnimationFrame(onboardInit);
+  // Hash change (back/forward)
+  window.addEventListener('hashchange', () => {
+    const h = readHash();
+    if (h && h.page !== S.page) navigate(h.page, {updateHash: false});
+  });
+
+  // First-run onboarding (skip in embed, skip on shared permalinks — viewer wants to see the thing, not a modal)
+  if (!S._embed && !(h0 && h0.s)) requestAnimationFrame(onboardInit);
 }
 
 document.addEventListener('DOMContentLoaded', init);

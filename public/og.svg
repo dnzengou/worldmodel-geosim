@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0e1a"/>
+      <stop offset="1" stop-color="#0d1117"/>
+    </linearGradient>
+    <linearGradient id="grn" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#00ff88"/>
+      <stop offset="1" stop-color="#00d4ff"/>
+    </linearGradient>
+    <radialGradient id="globe" cx="0.4" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#1e3a8a" stop-opacity="0.8"/>
+      <stop offset="0.6" stop-color="#0a1a3a" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- Grid -->
+  <g stroke="#1e2a3a" stroke-width="1" opacity="0.4">
+    <path d="M0 100 H1200 M0 200 H1200 M0 300 H1200 M0 400 H1200 M0 500 H1200"/>
+    <path d="M100 0 V630 M200 0 V630 M300 0 V630 M400 0 V630 M500 0 V630 M600 0 V630 M700 0 V630 M800 0 V630 M900 0 V630 M1000 0 V630 M1100 0 V630"/>
+  </g>
+  <!-- Globe -->
+  <circle cx="930" cy="315" r="230" fill="url(#globe)"/>
+  <circle cx="930" cy="315" r="230" fill="none" stroke="#00d4ff" stroke-width="1.5" opacity="0.4"/>
+  <ellipse cx="930" cy="315" rx="230" ry="60" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.3"/>
+  <ellipse cx="930" cy="315" rx="80" ry="230" fill="none" stroke="#00d4ff" stroke-width="1" opacity="0.3"/>
+  <!-- Chokepoint pins -->
+  <circle cx="860" cy="260" r="6" fill="#ff3855"/><circle cx="860" cy="260" r="12" fill="#ff3855" opacity="0.3"/>
+  <circle cx="990" cy="340" r="6" fill="#ffa500"/><circle cx="990" cy="340" r="12" fill="#ffa500" opacity="0.3"/>
+  <circle cx="920" cy="400" r="6" fill="#00ff88"/><circle cx="920" cy="400" r="12" fill="#00ff88" opacity="0.3"/>
+  <!-- Text -->
+  <text x="80" y="200" font-family="monospace" font-size="64" font-weight="700" fill="url(#grn)">2030 GeoSim</text>
+  <text x="80" y="260" font-family="monospace" font-size="26" fill="#94a3b8">CAS Geopolitical Risk Engine</text>
+  <g font-family="monospace" font-size="22" fill="#e2e8f0">
+    <text x="80" y="340">▸ 10 000 Monte Carlo runs · ~200 ms</text>
+    <text x="80" y="380">▸ Dempster-Shafer belief fusion</text>
+    <text x="80" y="420">▸ Hawk / Dove evolutionary dynamics</text>
+    <text x="80" y="460">▸ 3D chokepoint globe · live risk</text>
+  </g>
+  <text x="80" y="560" font-family="monospace" font-size="18" fill="#64748b">Open-source · No login · Agent-ready API</text>
+  <text x="80" y="590" font-family="monospace" font-size="16" fill="#00d4ff">worldmodel-geosim.vercel.app</text>
+</svg>

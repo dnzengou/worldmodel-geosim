@@ -1,0 +1,56 @@
+{
+  "$schema": "https://agents.json/schema/v1",
+  "name": "2030 GeoSim",
+  "version": "2.0",
+  "description": "CAS geopolitical risk engine — simulate, Monte Carlo, Dempster-Shafer fusion, game theory.",
+  "homepage": "https://worldmodel-geosim.vercel.app",
+  "source": "https://github.com/dnzengou/worldmodel-geosim",
+  "license": "Apache-2.0",
+  "tags": ["geopolitics", "risk", "simulation", "complex-adaptive-systems", "monte-carlo", "dempster-shafer", "game-theory", "open-source"],
+  "openapi": "https://worldmodel-geosim.vercel.app/openapi.json",
+  "contact": "https://github.com/dnzengou/worldmodel-geosim/issues",
+  "trust": {
+    "deterministic": true,
+    "data_retention": "none",
+    "pii_collection": "none",
+    "forecasts": false,
+    "disclosure": "Outputs are illustrative research artifacts, not forecasts or policy advice."
+  },
+  "capabilities": [
+    {
+      "id": "simulate",
+      "name": "Simulate one step",
+      "endpoint": "POST /api/simulate",
+      "input_example": { "base_escalation": 0.7, "triggers": { "energy": true, "chokepoint": true }, "nuclear_deterrence": true }
+    },
+    {
+      "id": "monte_carlo",
+      "name": "Monte Carlo risk",
+      "endpoint": "POST /api/monte-carlo",
+      "input_example": { "base_escalation": 0.7, "triggers": { "chokepoint": true }, "n_runs": 10000 }
+    },
+    {
+      "id": "belief",
+      "name": "Dempster-Shafer belief fusion",
+      "endpoint": "POST /api/belief",
+      "input_example": { "us": 0.6, "eu": 0.4, "ru": 0.7, "base_escalation": 0.5 }
+    },
+    {
+      "id": "nl",
+      "name": "Natural-language command",
+      "endpoint": "POST /api/nl",
+      "input_example": { "text": "taiwan blockade worst case" }
+    },
+    {
+      "id": "scenarios",
+      "name": "List pre-built scenarios",
+      "endpoint": "GET /api/scenarios"
+    },
+    {
+      "id": "world_state",
+      "name": "World state (chokepoints, routes, risk)",
+      "endpoint": "GET /api/world-state"
+    }
+  ],
+  "share_url_template": "https://worldmodel-geosim.vercel.app/#scenario={scenario_id}"
+}
